@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+		<style>
+        
+            /* Note: css styles will be overwritten by D3 attributes  */
+            
+            body { /* HTML element selector */
+                background-color: #FBF2EF;
+            }
+
+			p {
+                font-size: 12px;
+                background-color:white;
+                color: black;
+            }
+            
+            #rect-demo { /* id selector,  used to specify a style for a single, unique element */
+                fill: red;
+                stroke: black;
+            }
+            
+            .barplot { /* class selector, used to specify a style for a group of elements */
+                background-color: #e5eecc;
+                fill: #8ac007;
+            }
+            
+            /*svg {
+                shape-rendering: crispEdges;
+            }*/
+		</style>
+		
+        <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		
+        <div id = "rect-demo"></div>
+        
+        <div id = "bar-demo"> </div>
+        
+        <div id = "group-demo"> </div>
+        
+        <div id = "map-demo"> </div>
+        
+         <p id="debug">
+            <b>Debug info</b>
+            <br>
+         </p>
+        
+        </div>
+    </head>
+    <body>	
+		
+		
+		
+        <script>
+        
+        
+            // d3 code
+            
+            // d3.select() can take any CSS selector as an argument
+            // d3.append() is used to add a new element as a child of the selected element
+            
+            //////////
+            // black rectangle
+            //////////
+			var rectDemo = d3.select("#rect-demo").
+                append("svg"). // inserts <svg .. > tag in div 
+                attr("width", 400).
+                attr("height", 300);
+                //attr("class", "rect-demo");
+            
+            rectDemo.append("rect").// inserts <rect .. > tag in <svg .. > tag
+                attr("x",100).
+                attr("y", 100).
+                attr("height", 100).
+                attr("width", 200);
+            
+            // If the data is a simple array of numbers, the scale itself can be passed to 
+            // the attr method: attr("x", xScale)            
+            var xScale = d3.scale.linear().
+                domain([0,200]). // data min and max
+                range([0,100]); // width of the diagram
+            
+            /////////////////
+            // bar plot
+            /////////////////
+            var booksData = [   {year:2006, books: 54},
+                                {year:2007, books:43},
+                                {year:2008, books:41},
+                                {year: 2009, books: 44},
+                                {year: 2010, books: 35},
+                                {year: 2011, books:41}
+                            ];
+            var barWidth = 40;
+            var diagramWidth = (barWidth + 10) * booksData.length;
+            var diagramHeight = 200;
+            var xAxisHeight = 20;
+            // d3.scale.linear() returns a function
+            // xFun: array index --> x coordinate
+            var xFun = d3.scale.linear().
+                        domain([0, booksData.length]).
+                        range([222, diagramWidth+222]);
+            // yFun: books --> height
+            var yFun = d3.scale.linear().       // maximum of books for all entries in booksData
+                        domain([0, d3.max(  booksData, // d3.max() takes an optional accessor as its second argument
+                                            function(datum) { 
+                                                return datum.books;
+                                            })]).
+                        rangeRound([0, diagramHeight]);
+            
+            var barDemo = d3.select("#bar-demo").
+                append("svg").
+                attr("width", diagramWidth+222).
+                attr("height", diagramHeight+xAxisHeight).
+                attr("class", "barplot"); // allowing stylesheets to be applied to the element 
+            
+            //document.getElementById("debug").innerHTML += "selected #bar-demo <br>"; 
+
+            // put in the bars (rects)
+            barDemo.selectAll("rect").
+                data(booksData).
+                enter().
+                append("rect").
+                attr("x", function(datum, index) { return xFun(index); }).
+                attr("y", function(datum) { return diagramHeight - yFun(datum.books); }).
+                attr("height", function(datum) { return yFun(datum.books); } ).
+                attr("width", barWidth).
+                attr("fill", "#3284c4");
+            
+            
+            //debug
+            document.getElementById("debug").innerHTML += "barDemo var created <br>";             
+            document.getElementById("debug").innerHTML += "\nHoeveelheid books: " + booksData.length;
+            
+            // put in the numbers (text) 
+            barDemo.selectAll("text").
+                data(booksData).
+                enter().
+                append("text").
+                attr("x", function(datum, index) { return xFun(index) ; } ).
+                attr("y", function(datum) { return diagramHeight - yFun(datum.books); } ).
+                attr("dx", barWidth/2).
+                attr("dy", "1.2em").
+                attr("text-achor","middle"). //  characters  aligned such that the middle of the text string is at the current text position.
+                text( function(datum) { return datum.books; } ).
+                attr("fill", "white");
+            
+            // put in x axis (text)           
+            barDemo.selectAll("text.yAxis").
+              data(booksData).
+              enter().append("text").
+              attr("x", function(datum, index) { return xFun(index) + barWidth; }).
+              attr("y", diagramHeight+xAxisHeight).
+              attr("dx", -barWidth/2).
+              attr("text-anchor", "middle").
+              attr("style", "font-size: 12; font-family: Helvetica, sans-serif").
+              text(function(datum) { return datum.year;}).
+              attr("fill","black");              
+                
+            
+            /////////////////
+            // circles & rects group example
+            /////////////////
+            var circleData = [  { "cx": 20, "cy": 20, "radius": 20, "color": "green"},
+                                { "cx": 70, "cy": 70, "radius": 20, "color": "purple"}];
+            var rectangleData = [   {"rx": 110, "ry": 110, "height": 30, "width":30, "color":"blue"},
+                                    {"rx": 160, "ry": 160, "height": 30, "width":30, "color":"red"}];
+            
+            // create general container in "group-demo" div tag  + groups
+            var svgContainer = d3.select("#group-demo").
+                                append("svg").
+                                attr("width",250).
+                                attr("height",200);
+                                
+            var circleGroup = svgContainer.append("g");
+            var rectangleGroup = svgContainer.append("g").
+                                    attr("transform", "skewX(10)");
+            
+            var circles = circleGroup.selectAll("circle").
+                                data(circleData).
+                                enter().
+                                append("circle");
+                                
+            var circleAttributes = circles.
+                                    attr("cx", function(datum) {return datum.cx; }).
+                                    attr("cy", function(datum) { return datum.cy;}).
+                                    attr("r", function(datum) { return datum.radius;}).
+                                    style("fill", function(datum) { return datum.color; });
+            
+            var rectangles = rectangleGroup.selectAll("rect").
+                                data(rectangleData).
+                                enter().
+                                append("rect").
+                                attr("x", function(datum) {return datum.rx; }).
+                                attr("y", function(datum) { return datum.ry;}).
+                                attr("height", function(datum) { return datum.height;}).
+                                attr("width", function(datum) { return datum.width;}).
+                                style("fill", function(datum) { return datum.color; });
+                                
+             document.getElementById("debug").innerHTML += "<br> circles/rectangles done<br>";    
+             
+            /////////////////
+            // a geo based map
+            /////////////////
+            
+            var mapHeight = 300;
+            var mapWidth = 350;
+            
+            var svgMap = d3.select("#map-demo").
+                            append("svg").
+                            attr("width", mapWidth).
+                            attr("height",mapHeight);
+                            
+            var groupMap = svgMap.append("g");
+            
+            document.getElementById("debug").innerHTML += "Made groupMap <br>";    
+            
+            var projection = d3.geo.albersUsa();
+            document.getElementById("debug").innerHTML += "Made projection var <br>";    
+            
+            var mapData; // a global
+            
+            // "https://gist.github.com/mshafrir/2646763/raw/f2a89b57193e71010386a73976df92d32221d7ba/states_hash.json"            
+            //d3.json("us-states.json", function(error, json) {
+            //    if (error) {  
+             //       document.getElementById("debug").innerHTML += "Error loading map file <br>"; 
+            //        return console.warn(error); 
+            //    }
+            //    mapData = json;
+            //    document.getElementById("debug").innerHTML += "Map data length: " + json.length + "  <br>";         
+           // });
+            json = JSON.parse( "us-states.json" );
+            
+            //d3.json('json/us-states.json', function(collection) {
+            //    groupMap.selectAll('path')
+            //    .data(collection.features)
+            //    .enter().append('path')
+            //    .attr('d', d3.geo.path().projection(projection));
+                //.attr('id', function(d){return d.properties.name.replace(/\s+/g, '')})
+                //.style('fill', 'gray')
+               // .style('stroke', 'white')
+                //.style('stroke-width', 1);
+            //} 
+        </script>
+        
+        
+    </body>
+</html>     
