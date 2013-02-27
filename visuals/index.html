@@ -70,21 +70,30 @@
                 attr("height", 300);
                 //attr("class", "rect-demo");
             
-            rectDemo.append("rect").// inserts <rect .. > tag in <svg .. > tag
-                attr("x",100).
-                attr("y", 100).
-                attr("height", 100).
-                attr("width", 200);
+            var rect = rectDemo.append("rect").// inserts <rect .. > tag in <svg .. > tag
+                    attr("x",100).
+                    attr("y", 100).
+                    attr("height", 100).
+                    attr("width", 200);            
+            
+            rectDemo.selectAll("text").
+                data([{author: "Malevitsj"}]).
+                enter().
+                append("text").
+                attr("x", d3.select("rect").attr("x")).
+                attr("y", d3.select("rect").attr("y") ).
+                text( function(datum) { return datum.author; } );
+                
+            /////////////////
+            // bar plot
+            /////////////////
             
             // If the data is a simple array of numbers, the scale itself can be passed to 
             // the attr method: attr("x", xScale)            
             var xScale = d3.scale.linear().
                 domain([0,200]). // data min and max
                 range([0,100]); // width of the diagram
-            
-            /////////////////
-            // bar plot
-            /////////////////
+
             var booksData = [   {year:2006, books: 54},
                                 {year:2007, books:43},
                                 {year:2008, books:41},
@@ -203,45 +212,61 @@
             /////////////////
             // a geo based map
             /////////////////
-            
+            /*  The path element represents the outline of a shape which can be filled, 
+                stroked, used as a clipping path, or any combination of the three. 
+                ---> The d attribute defines the path data, which is a mini-language of path commands, <--- 
+                such as moveto (M), lineto (L) and closepath (Z). 
+                The path element is a generalization of all other shapes in SVG, 
+                and can be used to draw nearly anything!
+            */
             var mapHeight = 300;
-            var mapWidth = 350;
+            var mapWidth = 450;
             
             var svgMap = d3.select("#map-demo").
                             append("svg").
                             attr("width", mapWidth).
                             attr("height",mapHeight);
                             
-            var groupMap = svgMap.append("g");
+            var groupMap = svgMap.append("g").
+                attr("id", "groupMap").
+                attr("transform", "scale(.5, .5)");
             
             document.getElementById("debug").innerHTML += "Made groupMap <br>";    
             
             var projection = d3.geo.albersUsa();
             document.getElementById("debug").innerHTML += "Made projection var <br>";    
+           
+            //var path = d3.geo.path(); // this is a function that takes geojson data and transforms it to svg
+            var path = d3.geo.path().projection(projection);
             
-            var mapData; // a global
+            var mapColors = d3.scale.linear().domain([1,12]).range(['pink', '#304057']);
+           
+            document.getElementById("debug").innerHTML += "Path: " + path + " <br>";  
             
             // "https://gist.github.com/mshafrir/2646763/raw/f2a89b57193e71010386a73976df92d32221d7ba/states_hash.json"            
-            //d3.json("us-states.json", function(error, json) {
-            //    if (error) {  
-             //       document.getElementById("debug").innerHTML += "Error loading map file <br>"; 
-            //        return console.warn(error); 
-            //    }
-            //    mapData = json;
-            //    document.getElementById("debug").innerHTML += "Map data length: " + json.length + "  <br>";         
-           // });
-            json = JSON.parse( "us-states.json" );
+            d3.json("us-states.json", function(error, json) {
+                if (error) {  
+                    document.getElementById("debug").innerHTML += "Error loading map file <br>"; 
+                    return console.warn(error); 
+                }
+                console.log(json);
+                
+                groupMap.selectAll("path").   
+                    data(json.features).
+                    enter().
+                    append("path").
+                    attr("id", function(data) { return data.properties.name; }). // name of states
+                    attr("d", path). // svg path                   
+                    //style("fill", "#304057").
+                    style("fill", function(data) { // fill based on state name length
+                                    return mapColors(data.properties.name.length);
+                                    }).                        
+                    attr("stroke", "black").
+                    attr("stroke-width", 2);
+                    
+                document.getElementById("debug").innerHTML += "Put data in groupMap var  <br>";        
+            });
             
-            //d3.json('json/us-states.json', function(collection) {
-            //    groupMap.selectAll('path')
-            //    .data(collection.features)
-            //    .enter().append('path')
-            //    .attr('d', d3.geo.path().projection(projection));
-                //.attr('id', function(d){return d.properties.name.replace(/\s+/g, '')})
-                //.style('fill', 'gray')
-               // .style('stroke', 'white')
-                //.style('stroke-width', 1);
-            //} 
         </script>
         
         
