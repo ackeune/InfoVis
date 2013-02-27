@@ -53,6 +53,12 @@
             <div id = "map-demo">            
             </div>
             <pink>Click to zoom, when zoomed: click in middle to zoom out, other areas to pan (slide) </pink>
+            
+            <br>
+            
+            <div id="map-world">
+            <pink> A world map </pink>
+            
          </div>
         
          <p id="debug">
@@ -297,7 +303,7 @@
                 document.getElementById("debug").innerHTML += "Put data in groupMap var  <br>";        
             });
             
-        // not 100% sure how this works
+        // the zoom function, not 100% sure how this works
         function clickFun(d) {
             var x = 0, y = 0, k = 0.3;
             if (d && centered !== d) {
@@ -318,6 +324,47 @@
                 attr("stroke-width", 1.5/k);
             
         }
+        
+        /////////////
+        // world map
+        /////////////
+        
+        var svgMapWorld = d3.select("#map-world").
+                            append("svg").
+                            attr("x", 0).
+                            attr("y", 0).
+                            attr("width", 1000).
+                            attr("height",1000);
+         
+        var groupMapWorld = svgMapWorld.append("g").
+                attr("id", "group-map-world").
+                attr("x", 2).
+                attr("y", 2).
+                attr("transform", "scale(.5, .5)");
+                
+        d3.json("all-countries.json", function(error, collection) {
+        
+            if (error) {  
+                document.getElementById("debug").innerHTML += "Error loading world map file <br>"; 
+                return console.warn(error); 
+            }
+            console.log(collection);
+        
+            groupMapWorld.selectAll("path").
+                data(collection.features).
+                enter().
+                append("path").
+                    attr("stroke", "black").
+                    attr("id", function(data) { return data.properties.name; }). 
+                    attr("d", d3.geo.path().projection(
+                        d3.geo.albers().
+                            parallels([10, 10]).
+                            translate([500,800]).
+                            scale(200)
+                        )
+                    );
+            }
+        );
                     
         </script>
         
