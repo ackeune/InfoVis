@@ -13,10 +13,15 @@
 
 			p {
                 font-size: 12px;
-                background-color:white;
+                background-color: white;
                 color: black;
             }
             
+            pink {
+                font-size: 14px;
+                color: pink;
+                font-style: oblique;
+            }
             #rect-demo { /* id selector,  used to specify a style for a single, unique element */
                 fill: red;
                 stroke: black;
@@ -25,6 +30,10 @@
             .barplot { /* class selector, used to specify a style for a group of elements */
                 background-color: #e5eecc;
                 fill: #8ac007;
+            }
+            
+            #maps { /* id selector,  used to specify a style for a single, unique element */               
+                background-color: #364765;
             }
             
             /*svg {
@@ -40,7 +49,11 @@
         
         <div id = "group-demo"> </div>
         
-        <div id = "map-demo"> </div>
+        <div id = maps>
+            <div id = "map-demo">            
+            </div>
+            <pink>Click to zoom, when zoomed: click in middle to zoom out, other areas to pan (slide) </pink>
+         </div>
         
          <p id="debug">
             <b>Debug info</b>
@@ -68,7 +81,6 @@
                 append("svg"). // inserts <svg .. > tag in div 
                 attr("width", 400).
                 attr("height", 300);
-                //attr("class", "rect-demo");
             
             var rect = rectDemo.append("rect").// inserts <rect .. > tag in <svg .. > tag
                     attr("x",100).
@@ -171,6 +183,7 @@
             /////////////////
             // circles & rects group example
             /////////////////
+            
             var circleData = [  { "cx": 20, "cy": 20, "radius": 20, "color": "green"},
                                 { "cx": 70, "cy": 70, "radius": 20, "color": "purple"}];
             var rectangleData = [   {"rx": 110, "ry": 110, "height": 30, "width":30, "color":"blue"},
@@ -222,13 +235,28 @@
             var mapHeight = 300;
             var mapWidth = 450;
             
+           
+          
             var svgMap = d3.select("#map-demo").
                             append("svg").
+                            attr("x", 0).
+                            attr("y", 0).
                             attr("width", mapWidth).
                             attr("height",mapHeight);
-                            
+            
+            // draw a rect in the svg so that the map has a background/border
+            var rectMap = svgMap.append("rect").
+                            attr("x", 0).
+                            attr("y", 0).
+                            attr("width", mapWidth+2).
+                            attr("height",mapHeight+2).
+                            attr("fill", "pink");
+            
+                           
             var groupMap = svgMap.append("g").
-                attr("id", "groupMap").
+                attr("id", "group-map").
+                attr("x", 2).
+                attr("y", 2).
                 attr("transform", "scale(.5, .5)");
             
             document.getElementById("debug").innerHTML += "Made groupMap <br>";    
@@ -240,7 +268,8 @@
             var path = d3.geo.path().projection(projection);
             
             var mapColors = d3.scale.linear().domain([1,12]).range(['pink', '#304057']);
-           
+            var centered;
+            
             document.getElementById("debug").innerHTML += "Path: " + path + " <br>";  
             
             // "https://gist.github.com/mshafrir/2646763/raw/f2a89b57193e71010386a73976df92d32221d7ba/states_hash.json"            
@@ -262,11 +291,34 @@
                                     return mapColors(data.properties.name.length);
                                     }).                        
                     attr("stroke", "black").
-                    attr("stroke-width", 2);
+                    attr("stroke-width", 2).
+                    on("click", clickFun); // click is a function
                     
                 document.getElementById("debug").innerHTML += "Put data in groupMap var  <br>";        
             });
             
+        // not 100% sure how this works
+        function clickFun(d) {
+            var x = 0, y = 0, k = 0.3;
+            if (d && centered !== d) {
+                var centroid = path.centroid(d);
+                x = -centroid[0] + mapWidth/4;
+                y = -centroid[1] + mapHeight / 4;
+                k = 2;
+                centered = d;
+            }
+            else {
+                centered = null;
+            }
+            groupMap.selectAll("path").
+                classed("active", centered && function(d) { return d === centered; });
+            groupMap.transition().
+                duration(1000).
+                attr("transform", "scale("+ k + ") translate (" + x + mapWidth/2 + "," + y + ")").
+                attr("stroke-width", 1.5/k);
+            
+        }
+                    
         </script>
         
         
