@@ -36,13 +36,19 @@
                 background-color: #364765;
             }
             
+           
+                
+            
+            
             /*svg {
                 shape-rendering: crispEdges;
             }*/
 		</style>
 		
         <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-		
+		<script type="text/javascript" src="fisheye.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        
         <div id = "rect-demo"></div>
         
         <div id = "bar-demo"> </div>
@@ -56,8 +62,11 @@
             
             <br>
             
-            <div id="map-world">
+            <div id="map-world"> </div>
             <pink> A world map </pink>
+            
+            <div id="map-world2"> </div>
+            <pink> A 2nd world map </pink>
             
          </div>
         
@@ -333,14 +342,14 @@
                             append("svg").
                             attr("x", 0).
                             attr("y", 0).
-                            attr("width", 1000).
-                            attr("height",1000);
+                            attr("width", 900).
+                            attr("height",500);
          
         var groupMapWorld = svgMapWorld.append("g").
                 attr("id", "group-map-world").
                 attr("x", 2).
-                attr("y", 2).
-                attr("transform", "scale(.5, .5)");
+                attr("y", 2);
+                //attr("transform", "scale(.7, .7)");
                 
         d3.json("all-countries.json", function(error, collection) {
         
@@ -356,16 +365,166 @@
                 append("path").
                     attr("stroke", "black").
                     attr("id", function(data) { return data.properties.name; }). 
-                    attr("d", d3.geo.path().projection(
-                        d3.geo.albers().
-                            parallels([10, 10]).
-                            translate([500,800]).
-                            scale(200)
-                        )
-                    );
-            }
-        );
+                    attr("class", "countries").
+                    attr("d", d3.geo.path().projection(d3.geo.mercator())).
+                    style("fill", function(d) { return '#'+Math.floor(d.properties.name.charCodeAt(0)/100*4620980).toString(16); });
+                    //on('click', function(d) { alert ( "id: " +  this.id );});
                     
+            var baseWidth = 5;
+            var scaleFactor = 1.2;
+            
+            // d3.select("rect").attr("x")
+            d3.select("#group-map-world").selectAll("path")
+                .on('click', function(d) {              
+                    alert ( "BB = " + this.getBBox().x + " " + this.getBBox().y);
+                    // getBBox() is a native SVG element method
+                    var bbox = this.getBBox(),
+                        centroid = [bbox.x + bbox.width/2, bbox.y + bbox.height/2],
+                        zoomScaleFactor = baseWidth / bbox.width,
+                        zoomX = -centroid[0],
+                        zoomY = -centroid[1];
+
+                    // set a transform on the parent group element
+                    d3.select("#group-map-world")
+                        .attr("transform", "scale(" + scaleFactor + ")" +
+                            "translate(" + zoomX + "," + zoomY + ")");
+                });    
+        });
+        
+        
+         /////////////
+        // world map 2
+        /////////////
+        var fisheye = d3.fisheye.circular()
+            .radius(200)
+            .distortion(2);
+        
+        
+            
+        var svgMapWorld2 = d3.select("#map-world2").
+                            append("svg").
+                                attr("x", 0).
+                                attr("y", 0).
+                                attr("width", 900).
+                                attr("height",500).
+                                attr("pointer-events", "all").
+                            append("g")
+                                .call(d3.behavior.zoom().on("zoom", redraw));
+                                
+                                
+                            
+       
+        
+        
+        
+        var groupMapWorld2a = svgMapWorld2.append("g").
+                attr("id", "group-map-world2").
+                attr("class", "LifeExpectancyCountry").               
+                attr("x", 0).
+                attr("y", 0);
+                
+          groupMapWorld2a.append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("opacity", .5)
+                    .attr("width", 900)
+                    .attr("height",500);
+      
+        var vis = groupMapWorld2a;           
+        function redraw() {
+          trans=d3.event.translate;
+          scale=d3.event.scale;
+          vis.attr("transform",
+              "translate(" + trans + ")"
+              + " scale(" + scale + ")");
+        }
+        
+        var groupMapWorld2 = groupMapWorld2a;
+        
+        d3.json("all-countries.json", function(error, collection) {
+        
+            if (error) {  
+                document.getElementById("debug").innerHTML += "Error loading world map file <br>"; 
+                return console.warn(error); 
+            }
+            console.log(collection);
+        
+            groupMapWorld2.selectAll("path").
+                data(collection.features).
+                enter().
+                append("path").
+                    attr("stroke", "black").
+                    attr("id", function(data) { return data.properties.name; }).   
+                    //style("fill", function(d) { return '#'+Math.floor(d.properties.name.charCodeAt(0)/100*4620980).toString(16); }).                   
+                    attr("d", d3.geo.path().projection(d3.geo.mercator().scale(500).rotate([-10,0,0])));
+          
+        });
+        
+        
+        var rows; // first
+        d3.csv("life_expectancy_per_country_CIA.csv", function(data) { // third
+            rows = data;
+            console.log(rows);            
+            doSomethingWithRows();
+        });        
+        //second
+        
+        function doSomethingWithRows() {
+             var rank = [], countryName = [], years =[];
+             console.log(rows[0]);
+             rows.map(function(d) {
+                rank.push(d.RANK);
+                countryName.push(d.COUNTRY);
+                years.push(d.YEARS);
+            })
+            //console.log(rows);
+           
+           /*groupMapWorld2.selectAll("path").
+                data(rows, function(d){return d.id;}).
+                    attr("stroke", "black").
+                    attr("id", function(data) { return data.COUNTRY; });
+                    style("fill", function(data) { return '#'+Math.floor(data.COUNTRY.charCodeAt(0)/100*4620980).toString(16); }).                   
+                    
+            */
+
+            groupMapWorld2.selectAll("path").
+                            //data(rows).
+                            attr("fill", function(d) {
+                                var fillColor = "black";
+                                
+                                //document.getElementById("debug").innerHTML += this.id + " <br>";   // json country names
+                                
+                                for(var i in countryName) { // maybe better use jQuery, for for-each loops
+                                    //console.log(countryName[i]);
+                                    //alert(countryName[i]);
+                                    if(countryName[i] == this.id){
+                                        //document.getElementById("debug").innerHTML += "same <br>"; 
+                                        this.years = years[i];
+                                        fillColor = colorLEFunction(years[i]);
+                                    }
+                                }                                
+                                return fillColor;                               
+                            })
+                           // .on("mouseover", function(){return tooltip.style("visibility", "visible");})
+                            .on("mouseover", function(d){return tooltip.text(this.id + ": " + this.years);})
+                            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                            //.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+         }
+         
+         var colorLEFunction = d3.scale.linear()
+            .domain([40, 65,90])
+            .range(["darkred", "pink", "#0b640d"]);
+ 
+        var tooltip = d3.select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "visible")
+            .style("color", "white")
+            .text("a simple tooltip");
+       
+        
+        
         </script>
         
         
