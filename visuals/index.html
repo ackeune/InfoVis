@@ -36,8 +36,33 @@
                 background-color: #364765;
             }
             
-           
-                
+            .bar {
+              fill: steelblue;
+            }
+            
+            .xaxis path,
+            .xaxis line {
+                fill: none;
+                stroke: black;                
+                stroke: black;                
+            }
+            
+            .xaxis text {
+                font-family: sans-serif;
+                font-size: 9px;
+            }
+            
+            .yaxis path,
+            .yaxis line {
+                fill: none;
+                stroke: black;                
+                stroke: black;                
+            }
+            
+            .yaxis text {
+                font-family: sans-serif;
+                font-size: 10px;
+            }
             
             
             /*svg {
@@ -48,6 +73,7 @@
         <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
 		<script type="text/javascript" src="fisheye.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        
         
         <div id = "rect-demo"></div>
         
@@ -70,6 +96,10 @@
             
          </div>
         
+        <div id="bars-example">
+            
+          </div>
+          
          <p id="debug">
             <b>Debug info</b>
             <br>
@@ -83,6 +113,9 @@
 		
         <script>
         
+
+
+
         
             // d3 code
             
@@ -183,7 +216,7 @@
                 attr("fill", "white");
             
             // put in x axis (text)           
-            barDemo.selectAll("text.yAxis").
+            barDemo.selectAll("text.xAxis").
               data(booksData).
               enter().append("text").
               attr("x", function(datum, index) { return xFun(index) + barWidth; }).
@@ -506,9 +539,9 @@
                                 return fillColor;                               
                             })
                            // .on("mouseover", function(){return tooltip.style("visibility", "visible");})
-                            .on("mouseover", function(d){return tooltip.text(this.id + ": " + this.years);})
+                            .on("mouseover", function(d){return tooltip.text(this.id + ": " + this.years).style("visibility","visible");})
                             .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                            //.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+                            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
          }
          
          var colorLEFunction = d3.scale.linear()
@@ -524,6 +557,132 @@
             .text("a simple tooltip");
        
         
+        ////////////////
+        // bar chart
+        ///////////////////
+        
+        exampleData = [   {year:2006, books: 54, english:3},
+                                {year:2007, books:43, english:10},
+                                {year:2008, books:41, english:3},
+                                {year: 2009, books: 44, english:12},
+                                {year: 2010, books: 35, english:13},
+                                {year: 2011, books:41, english:7}
+                            ];
+     
+        var barWidth = 40;
+        var diagramWidth = 3000;
+        var diagramHeight = 400;
+        var xAxisHeight = 20;
+        // d3.scale.linear() returns a function
+        
+        var xFun = d3.scale.ordinal()
+                    .rangeRoundBands([0, diagramWidth], .3);
+                  //  domain([0, exampleData.length]).
+                    //.range([0, diagramWidth]);
+      
+      
+        var yFun = d3.scale.linear().    
+                   range([diagramHeight, 0]);
+        
+        var xAxis = d3.svg.axis()
+            .scale(xFun)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(yFun)
+            .ticks(5)
+            .orient("right");
+
+    
+        var barsExample = d3.select("#bars-example").
+            append("svg"). // inserts <svg .. > tag in div 
+            attr("width", diagramWidth).
+            attr("height", diagramHeight+20);
+        
+        //document.getElementById("debug").innerHTML += "selected #bar-demo <br>"; 
+
+        
+        var allData; // first
+        d3.csv("merged_db_20130308.csv", function(error, data) { // third
+            allData = data;
+            console.log(allData);       
+            var countryArray = new Array(1);
+            var yearsArray = new Array(1);
+            data.forEach(function(d) {
+                //document.getElementById("debug").innerHTML += "d: " + d.YEARS + " <br>";  
+                countryArray.push(d.COUNTRY);
+                yearsArray.push(d.YEARS);
+                
+                document.getElementById("debug").innerHTML += "country: " + d.COUNTRY + " <br>";  
+                document.getElementById("debug").innerHTML += "years: " + d.YEARS + " <br>";  
+                if (d.COUNTRY ) {
+                    d.YEARS = +d.YEARS;
+                }
+            });      
+            
+            
+            xFun.domain(data.map(function(d) {   return d.COUNTRY ; }   ));
+            yFun.domain([0, d3.max(data, function(d) { return d["YEARS"]; })]);
+            
+            document.getElementById("debug").innerHTML += "max years: " + d3.max(data, function(d) { return d["YEARS"]; }) + " <br>";  
+    
+            
+            barsExample.selectAll(".bar")
+                .data(data)
+                .enter()
+                    .append("rect")
+                        .attr("class","bar")
+                        .attr("x", function(d) {return xFun(d.COUNTRY); })
+                        .attr("width", xFun.rangeBand())
+                        .style("fill", function(d) { if (isNaN(d.YEARS)) {
+                                                        return "red";
+                                                    }
+                                                    else {
+                                                        return this.fill;
+                                                }})
+                        .attr("y", function(d) { if (isNaN(d.YEARS)) {
+                                                        return diagramHeight - 10;
+                                                    }
+                                                    else {
+                                                        return yFun(d.YEARS);
+                                                }})
+                        .attr("height", function(d) { 
+                                                        if (isNaN(d.YEARS)) {
+                                                            return yFun(10);
+                                                        }
+                                                        else {
+                                                            return diagramHeight- yFun(d.YEARS);
+                                                        }
+                                                    });
+                                                    
+            barsExample.append("g")
+                .attr("class","xaxis")
+                //.attr("transform", "translate(200,100)rotate(180)")
+                .attr("transform", "translate(0," + (diagramHeight ) + ")")
+                .call(xAxis)
+                    .selectAll("text")  
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", -5.5)  // why...??
+                    .attr("transform", function(d) {
+                        return "rotate(90)" 
+                    });
+                
+            barsExample.append("g")
+                .attr("class", "yaxis")
+                .attr("transform", "translate(" + 10 + ",0)")
+                .call(yAxis);
+                        
+        });  
+        
+        
+           
+       
+        
+                            
+        document.getElementById("debug").innerHTML += "length of exampleData: " + exampleData.length + " <br>";  
+        
+       
         
         </script>
         
