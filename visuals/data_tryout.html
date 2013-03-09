@@ -598,10 +598,10 @@
           .call(xAxis)
           .selectAll("text")  
                 .style("text-anchor", "end")
-                .attr("dx", -11)
+                //.attr("dx", "3em")
                 .attr("dy", -7)  // why...??
                 .attr("transform", function(d) {
-                        return "translate(0,-5),rotate(-80)";
+                        return "translate(0,7),rotate(-80)";
                     });
                 
         groupedBarSvg.append("g")
