@@ -1,0 +1,1 @@
+see http://www.gayadesign.com/diy/animated-tabbed-content-with-jquery/
