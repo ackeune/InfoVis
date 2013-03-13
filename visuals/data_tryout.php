@@ -13,13 +13,23 @@
 
 			           
             p {
-                font-size: 10px;
+                font-size: 11px;
                 color: black;
                 background-color: gray;
                 font-style: bold;
                 font-family: sans-serif;
+                padding-top:10px;
+                padding-bottom:10px;
+                padding-right:5px;
+                padding-left:5px;
+                margin: 0px;
             }
             
+            #missingcountries {
+                font-size: 10px;
+                background-color: #a2a2a2;
+                padding:10px;
+            }
             #rect-demo { /* id selector,  used to specify a style for a single, unique element */
                 fill: red;
                 stroke: black;
@@ -104,26 +114,21 @@
 		<script type="text/javascript" src="fisheye.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
         <script src="tabbedContent.js" type="text/javascript"></script>
-       
+        <script type="text/javascript" src="sugar-1.3.9.min.js"></script>
         
         <div id = maps>            
             <p>Life expectancy (use scrollwheel to zoom, mouse to pan)</p>
             <div id="map-world2"> </div>
          </div>
         
-        <p>Life expectancy plot using <b>merged_db_20130308.csv</b> </p>
+        <p>Life expectancy plot using <b>merged_db_20130313.csv</b> </p>
         <div id="bars-example"></div>
      	
      	
      	
      	<p>How many minutes to work for coffee, bread, and 1/10 th of a pair of jeans. <br/>
-     	    Using <b>merged_db_20130308.csv</b> <br/>
-     	    Note that many values are missing cuz of <br/>
-     	    <i>
-     	      1. The static Numbeo lists contains less than using  Numbeo API ; <br/>
-     	      2. The minimum wage has not been found yet for all countries; <br/>
-     	      3. Excel precision: wage per minute gets rounded to zero in case of e.g. 0.0001 (poor countries :( )<br/>     	      
-     	    </i> 
+     	    Using <b>merged_db_20130313.csv</b> <br/>
+     	    <p id="missingcountries"></p>
  	    </p>
      	<div id="grouped-bars"></div>
         
@@ -324,7 +329,7 @@
 
     
     var allData; // first
-    d3.csv("merged_db_20130308.csv", function(error, data) { // third
+    d3.csv("merged_db_20130313.csv", function(error, data) { // third
         allData = data;
         console.log(allData);       
         var countryArray = new Array(1);
@@ -408,7 +413,7 @@
      this.cost = cost;
     }
 
-	d3.csv("merged_db_20130308.csv", function(error, data) { // third
+	d3.csv("merged_db_20130313.csv", function(error, data) { // third
 	    document.getElementById("debug").innerHTML += "got in table cvs reading function <br>";  
         
         //console.log(matrixData);
@@ -437,9 +442,41 @@
         console.log("workData2:");
         console.log(workData2);
         fillMatrixMinutes();        
+        calcMissingCountries();
+        
         makeGroupedBars(workData2);
+        
+        removeTest(workData2);
+        
         showMinutesTable();
     });     
+    
+    function calcMissingCountries() {
+        var nrNoWage= workData2.count(function(el) { return !(isNumber(el["wage per minute"])); });
+        
+        var nrNoNumbeo = workData2.count(function(el) { return (isNumber(el["wage per minute"]) && 
+                                                            el["products"].count(function(p) { 
+                                                                    return !isNumber(p.cost);
+                                                                }) == productNames.length
+                                                            ); });
+                                                            
+        var nrWageAndAllNumbeo = workData2.count(function(el) { return (isNumber(el["wage per minute"]) && 
+                                                            el["products"].count(function(p) { 
+                                                                    return isNumber(p.cost);
+                                                                }) == productNames.length
+                                                            ); });
+                                                            
+        var nrWageAndSomeNumbeo = workData2.count(function(el) { return (isNumber(el["wage per minute"]) && 
+                                                            el["products"].count(function(p) { 
+                                                                    return isNumber(p.cost);
+                                                                }) > 0
+                                                            ); });
+        
+        document.getElementById("missingcountries").innerHTML += nrNoWage + " countries have no wage info <br>";
+        document.getElementById("missingcountries").innerHTML += nrNoNumbeo + " countries do have wage info, but no Numbeo product cost info <br>";
+        document.getElementById("missingcountries").innerHTML += nrWageAndAllNumbeo + " countries do have wage info, and ALL Numbeo product's cost info <br>";
+        document.getElementById("missingcountries").innerHTML += nrWageAndSomeNumbeo + " countries do have wage info, and at least 1 Numbeo product cost info <br>";
+    }
     
     function fillMatrixMinutes(){
         for (var i=0; i < productNames.length; i++) {
@@ -450,7 +487,7 @@
     }
     
     function showMinutesTable() {
-        var showCost = false;
+        var showCost = true;
         makeMinutesTable(workData, productNames, showCost);
     }
     
@@ -561,7 +598,7 @@
        
         var margin = {top: 10, right: 35, bottom: 210, left: 35},
             width = 2000 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+            height = 1000 - margin.top - margin.bottom;
             
         var x0 = d3.scale.ordinal()
             .rangeRoundBands([0, width],.1);
@@ -671,114 +708,19 @@
               .text(function(d) { return d; });   
     }
     
-    //////////////
-    // get numbeo data
-    //////////////
-    
-    // urlencode
-    // http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas
-    
-    var url1 = "encodeurl.php?url=http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas";
-    
-    $.ajax({
-        url:"proxy.php?url=http%3A%2F%2Fwww.numbeo.com%2Fapi%2Fcountry_prices%3Fapi_key%3Duva_nl_6432%26country%3DBahamas",
-        type:'GET',
-        dataType:"json",
-        success:function(data){console.log(data);}
-    });
-
-    /*$.ajax({
-        type : "Get",
-        url :"http://www.numbeo.com/api/country_prices",
-        data :"?api_key="+"uva_nl_6432"+"&country="+"Bahamas",
-        dataType :"jsonp",
-        jsonp: false,
-        jsonpCallback: "myJsonMethod",
-        success : function(data){
-            alert(data);},
-        error : function(httpReq,status,exception){
-            alert(status+" "+exception);
-        }
-    });
-    function myJsonMethod(data) {
-    
-    }
-    */
-    /*
-    $(document).ready(function() {
-
-        jQuery.ajax({ 
-            type: 'GET',
-            url: 'http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas' ,
-            dataType: 'jsonp', 
-            success: function(data) { 
-                alert('success');
-            }
-        });
-
-    
-      });//end document.ready
-      */
-    /*
-    //jsonp
-    $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
-        {
-        tags: "mount rainier",
-        tagmode: "any",
-        format: "json"
-        },
-        function(data) {
-            $.each(data.items, function(i,item){
-                $("<img/>").attr("src", item.media.m).appendTo("#images");
-                if ( i == 3 ) 
-                    return false;
-            });
-        });
+    function removeTest(workData2) {
+        workData2.remove(function(el) { return el.country === "Uganda"; });
         
-    $.getJSON("http://www.numbeo.com/api/country_prices?jsoncallback=?",
-        {
-            api_key: "uva_nl_6432",
-            country: "Bahamas"
-        },
-        function(data) {
-            //$.each(data.items, function(i,item){
-                console.log(json_encode(data));
-               // $("<img/>").attr("src", item.media.m).appendTo("#images");
-               // if ( i == 3 ) 
-               //     return false;
-            //});
-        });
-     
-    */
-
-    /*
-    $(document).ready(function() {
-      $.getJSON('http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas', function(json) { 
-        $('#twitter_followers').text(json); //get the follower_count from the json object and put it in a span
-      });
-    });
-    */
-    /*
-    $.get(
-        "http://www.numbeo.com/api/country_prices.php",
-        {api_key : 'uva_nl_6432', country : 'Bahamas'},
-        function(data) {
-           alert('page content: ' + data);
-        }
-    );
-    */
-    /*
-    console.log(httpGet("http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas"));
-    
-    function httpGet(theUrl){
-        var xmlHttp = null;
-
-        xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", theUrl, false );
-        xmlHttp.send( null );
-        return xmlHttp.responseText;
+        var groupedBarSvg = d3.select("#grouped-bars");
+        var country = groupedBarSvg.selectAll("countrybars")
+                        .data(workData2);
+        country.exit().remove();
+                        
+            /* country.selectAll("rect")
+                .data(function(d) { return d.products; })
+                .exit().remove();*/
     }
-    */
+    
     </script>
         
         
