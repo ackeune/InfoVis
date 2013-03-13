@@ -403,7 +403,7 @@
 	/////////////////
 	// table
 	///////////////
-	var productNames = ["cappuccino", "bread", "jeans"];
+	var productNames = ["cappuccino", "bread", "jeans","cinema"];
 	
 	var workData = [];
 	var workData2 = [];
@@ -425,6 +425,11 @@
             obj["cappuccino cost"]=  d["Cappucinno USD"];
             obj["jeans cost"] = d["Pair of Levis jeans USD"];
             obj["bread cost"] = d["Loaf of bread USD"];
+            //obj["internet cost"] = d["Internet  USD"];
+            //obj["sneakers cost"]=d["Nike sneakers USD"];
+            obj["cinema cost"]=d["Movie ticket USD"];
+           // obj["prepaid cost"]=d["1mn prepaid mobile USD"];
+            
             workData.push(obj);    
             
             var obj2 = {};
@@ -434,6 +439,10 @@
             obj2["products"].push( new Product("cappuccino", d["Cappucinno USD"]) );
             obj2["products"].push( new Product("jeans", d["Pair of Levis jeans USD"]) );
             obj2["products"].push( new Product("bread", d["Loaf of bread USD"]) );
+            //obj2["products"].push( new Product("internet", d["Internet  USD"]));
+           // obj2["products"].push( new Product ("sneakers", d["Nike sneakers USD"]));
+            obj2["products"].push( new Product ("cinema",d["Movie ticket USD"]));
+          //  obj2["products"].push( new Product ("prepaid", d["1mn prepaid mobile USD"]));
             
             workData2.push(obj2);           
            // document.getElementById("debug").innerHTML += "country: " + d.COUNTRY + " <br>";  
@@ -446,8 +455,8 @@
         
         makeGroupedBars(workData2);
         
-        workData2.remove(function(el) { return el.country === "Uganda"; });
-        workData.remove(function(el) { return el.country === "Uganda"; });
+       // workData2.remove(function(el) { return el.country === "Uganda"; });
+       // workData.remove(function(el) { return el.country === "Uganda"; });
         
         removeTest(workData2);
         
@@ -457,6 +466,12 @@
     function calcMissingCountries() {
         var nrNoWage= workData2.count(function(el) { return !(isNumber(el["wage per minute"])); });
         
+        var nrNoWageWithNumbeo = workData2.count(function(el) { return (!(isNumber(el["wage per minute"])) && 
+                                                            el["products"].count(function(p) { 
+                                                                    return isNumber(p.cost);
+                                                                }) > 0
+                                                            ); } );
+                                                            
         var nrNoNumbeo = workData2.count(function(el) { return (isNumber(el["wage per minute"]) && 
                                                             el["products"].count(function(p) { 
                                                                     return !isNumber(p.cost);
@@ -476,6 +491,8 @@
                                                             ); });
         
         document.getElementById("missingcountries").innerHTML += nrNoWage + " countries have no wage info <br>";
+        document.getElementById("missingcountries").innerHTML += nrNoWageWithNumbeo + " countries have no wage info but  at least 1 Numbeo product cost info<br>";
+
         document.getElementById("missingcountries").innerHTML += nrNoNumbeo + " countries do have wage info, but no Numbeo product cost info <br>";
         document.getElementById("missingcountries").innerHTML += nrWageAndAllNumbeo + " countries do have wage info, and ALL Numbeo product's cost info <br>";
         document.getElementById("missingcountries").innerHTML += nrWageAndSomeNumbeo + " countries do have wage info, and at least 1 Numbeo product cost info <br>";
@@ -601,7 +618,7 @@
             }    
        } 
        
-        var margin = {top: 10, right: 35, bottom: 210, left: 35},
+        var margin = {top: 10, right: 35, bottom: 210, left: 40},
             width = 2000 - margin.left - margin.right,
             height = 1000 - margin.top - margin.bottom;
             
@@ -614,7 +631,7 @@
             .range([height, 0]);
         
         var colorBars = d3.scale.ordinal()
-            .range(["#98abc5",  "#6b486b",  "#ff8c00"]);
+            .range(["#98abc5",  "#6b486b",  "#ff8c00", "#f86161", "#427f6f" , "#0d78b6"]);
         
         var xAxis = d3.svg.axis()
             .scale(x0)
@@ -639,30 +656,31 @@
     
         document.getElementById("debug").innerHTML += "max minutes: " + maxMinutes + " <br>";
         
-        groupedBarSvg.append("g")
-          .attr("class", "xaxis")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis)
-          .selectAll("text")  
-                .style("text-anchor", "end")
-                //.attr("dx", "3em")
-                .attr("dy", -7)  // why...??
-                .attr("transform", function(d) {
-                        return "translate(0,7),rotate(-80)";
-                    });
+        var xas = groupedBarSvg.append("g")
+                  .attr("class", "xaxis")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(xAxis)
+                  .selectAll("text")  
+                        .style("text-anchor", "end")
+                        //.attr("dx", "3em")
+                        .attr("dy", -7)  // why...??
+                        .attr("transform", function(d) {
+                                return "translate(0,7),rotate(-80)";
+                            });
                 
-        groupedBarSvg.append("g")
-              .attr("class", "yaxis")
-              .call(yAxis)
-                .append("text")
-                  .attr("transform", "rotate(-90)")
-                  .attr("x", 0 - (height/4))
-                  .attr("y", 6)
-                  .attr("dy", ".71em")
-                  .style("text-anchor", "end")
-                  .text("Minutes of work");
+        var yas = groupedBarSvg.append("g")
+                  .attr("class", "yaxis");
                   
-      var country = groupedBarSvg.selectAll(".country")
+                  yas.call(yAxis)
+                        .append("text")
+                          .attr("transform", "rotate(-90)")
+                          .attr("x", 0 - (height/4))
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("Minutes of work");
+                  
+      var country = groupedBarSvg.selectAll("g.countrybars")                    
                         .data(workData2);
          
         d3country = country;
@@ -670,6 +688,7 @@
         country.enter()
             .append("g")
             .attr("class", "countrybars")
+            .attr("id", function(d) { return "countrybars_"+ d.country; })
             .attr("transform", function(d) { return "translate(" + x0(d.country) + ",0)"; });
         
         
@@ -679,6 +698,7 @@
                 .enter()
                 .append("rect")
                     .attr("class", "rectangle")
+                    .attr("id", function(d) { return "rectangle_"+d.name; })
                     .attr("width", x1.rangeBand())
                     .attr("x", function(d) { return x1(d.name); })
                     .attr("y", function(d) { return y(d.minutes); }  )
@@ -720,6 +740,106 @@
               .attr("dy", ".35em")
               .style("text-anchor", "begin")
               .text(function(d) { return d; });   
+              
+              
+      
+      ///////////////
+     removeTestInner();
+
+     function removeTestInner() {                
+        workData2.remove(function(el) { return el.country === "Uganda" || el.country == "Afghanistan"; });
+     
+     
+         maxMinutes = d3.max(workData2, function(d) {  return d3.max(d.products, function(d) {  return d.minutes; }); });
+            console.log(workData2);
+            console.log(maxMinutes);
+            y.domain([-10, maxMinutes]);
+            
+          var country = groupedBarSvg.selectAll("g.countrybars")
+                            .data(workData2, function(d) { return(d.country); });
+           
+        
+        // we hebben nu geen enter selectie
+        /*country.enter()
+            .append("g")
+            .attr("class", "countrybars")
+            .attr("id", function(d) { return "countrybars_"+ d.country; })
+            .attr("transform", function(d) { return "translate(" + x0(d.country) + ",0)"; }); 
+            
+        */
+        
+
+        //d3.select("#grouped-bars").select("g.yaxis").remove();
+        
+         
+       country.exit()
+        .selectAll("rect")
+            .transition()
+              .duration(6000)
+              .attr("y", function(d) { return  y(0); } )
+              .attr("height", function(d) { return  height- y(0); } )
+              .style("fill-opacity", 1e-6)
+              .remove();
+              
+      //.transition().delay().duration(1000).attr("y",  y(0)  ).remove();  
+        
+        maxMinutes = d3.max(workData2, function(d) {  return d3.max(d.products, function(d) {  return d.minutes; }); });
+        console.log(workData2);
+        console.log(maxMinutes);
+        y.domain([-10, maxMinutes]);
+        //var yAxis = d3.svg.axis()
+       //     .scale(y)
+       //     .orient("left");
+            
+       //  var yas = groupedBarSvg.append("g")
+        //          .attr("class", "yaxis");
+          
+     //   x0.domain(workData2.map(function(d) { return d.country; }));
+      // xas.transition().delay(100).duration(5000).call(xAxis);
+       
+       yas.transition().delay(100).duration(5000).call(yAxis);
+                      /*  .append("text")
+                          .attr("transform", "rotate(-90)")
+                          .attr("x", 0 - (height/4))
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("Minutes of work");*/
+        
+        
+         
+       
+       // country.selectAll("rect").remove();
+        
+        
+        
+     var countryProducts = country.selectAll("rect")
+                         .data(function(d) { return d.products; });
+       
+        
+        countryProducts.transition().delay(100).duration(5000).attr("y", function(d) { return y(d.minutes); }  )
+                                                               .attr("height", function(d) { return height - y(d.minutes);  })
+       // countryProducts.transition.duration(2000).attr("x", function(d) {  return x1(d.name); });
+       // countryProducts.transition().duration(8000).attr("height", function(d) { return height - y(d.minutes);  });
+         
+          
+        /*countryProducts.enter()
+                        .append("rect")
+                            .attr("class", "rectangle")
+                            .attr("width", x1.rangeBand())
+                            .attr("x", function(d) {  return x1(d.name); })
+                            .attr("y", function(d) { return y(d.minutes); }  )
+                            .attr("height", function(d) { return height - y(d.minutes);  })
+                            .style("fill", function(d) { return colorProducts(d.name, d.minutes); });
+                    
+        */
+        
+        
+        
+       // d3.select("#grouped-bars").selectAll("g.yaxis").remove();
+        
+       }
+        
     }
     
     function removeTest(workData2) {
@@ -731,10 +851,10 @@
           var bla =   d3.select("#grouped-bars").selectAll("g.countrybars");
                                // .data(workData2, function(d) { return(d); });
                                 
-        console.log("bla:");
-        console.log(bla);
+        //console.log("bla:");
+       // console.log(bla);
             
-  
+    
                         
         
                         
