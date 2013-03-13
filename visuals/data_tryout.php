@@ -102,7 +102,7 @@
 		
         <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
 		<script type="text/javascript" src="fisheye.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
         <script src="tabbedContent.js" type="text/javascript"></script>
        
         
@@ -136,6 +136,8 @@
          </p>
         
         </div>
+        
+        <div id="images"</div>
     </head>
     <body>	
 		
@@ -668,6 +670,115 @@
               .style("text-anchor", "begin")
               .text(function(d) { return d; });   
     }
+    
+    //////////////
+    // get numbeo data
+    //////////////
+    
+    // urlencode
+    // http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas
+    
+    var url1 = "encodeurl.php?url=http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas";
+    
+    $.ajax({
+        url:"proxy.php?url=http%3A%2F%2Fwww.numbeo.com%2Fapi%2Fcountry_prices%3Fapi_key%3Duva_nl_6432%26country%3DBahamas",
+        type:'GET',
+        dataType:"json",
+        success:function(data){console.log(data);}
+    });
+
+    /*$.ajax({
+        type : "Get",
+        url :"http://www.numbeo.com/api/country_prices",
+        data :"?api_key="+"uva_nl_6432"+"&country="+"Bahamas",
+        dataType :"jsonp",
+        jsonp: false,
+        jsonpCallback: "myJsonMethod",
+        success : function(data){
+            alert(data);},
+        error : function(httpReq,status,exception){
+            alert(status+" "+exception);
+        }
+    });
+    function myJsonMethod(data) {
+    
+    }
+    */
+    /*
+    $(document).ready(function() {
+
+        jQuery.ajax({ 
+            type: 'GET',
+            url: 'http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas' ,
+            dataType: 'jsonp', 
+            success: function(data) { 
+                alert('success');
+            }
+        });
+
+    
+      });//end document.ready
+      */
+    /*
+    //jsonp
+    $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
+        {
+        tags: "mount rainier",
+        tagmode: "any",
+        format: "json"
+        },
+        function(data) {
+            $.each(data.items, function(i,item){
+                $("<img/>").attr("src", item.media.m).appendTo("#images");
+                if ( i == 3 ) 
+                    return false;
+            });
+        });
+        
+    $.getJSON("http://www.numbeo.com/api/country_prices?jsoncallback=?",
+        {
+            api_key: "uva_nl_6432",
+            country: "Bahamas"
+        },
+        function(data) {
+            //$.each(data.items, function(i,item){
+                console.log(json_encode(data));
+               // $("<img/>").attr("src", item.media.m).appendTo("#images");
+               // if ( i == 3 ) 
+               //     return false;
+            //});
+        });
+     
+    */
+
+    /*
+    $(document).ready(function() {
+      $.getJSON('http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas', function(json) { 
+        $('#twitter_followers').text(json); //get the follower_count from the json object and put it in a span
+      });
+    });
+    */
+    /*
+    $.get(
+        "http://www.numbeo.com/api/country_prices.php",
+        {api_key : 'uva_nl_6432', country : 'Bahamas'},
+        function(data) {
+           alert('page content: ' + data);
+        }
+    );
+    */
+    /*
+    console.log(httpGet("http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&country=Bahamas"));
+    
+    function httpGet(theUrl){
+        var xmlHttp = null;
+
+        xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false );
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+    */
     </script>
         
         

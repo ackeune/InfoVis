@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>JSON to CSV</title>
+    <script src="json.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    var json3 = { "d": "[{\"Id\":1,\"UserName\":\"Sam Smith\"},{\"Id\":2,\"UserName\":\"Fred Frankly\"},{\"Id\":1,\"UserName\":\"Zachary Zupers\"}]" }
+
+    function JSON2CSV(objArray) {
+        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+
+        var str = '';
+        var line = '';
+
+        if ($("#labels").is(':checked')) {
+            var head = array[0];
+            if ($("#quote").is(':checked')) {
+                for (var index in array[0]) {
+                    var value = index + "";
+                    line += '"' + value.replace(/"/g, '""') + '",';
+                }
+            } else {
+                for (var index in array[0]) {
+                    line += index + ',';
+                }
+            }
+
+            line = line.slice(0, -1);
+            str += line + '\r\n';
+        }
+
+        for (var i = 0; i < array.length; i++) {
+            var line = '';
+
+            if ($("#quote").is(':checked')) {
+                for (var index in array[i]) {
+                    var value = array[i][index] + "";
+                    line += '"' + value.replace(/"/g, '""') + '",';
+                }
+            } else {
+                for (var index in array[i]) {
+                    line += array[i][index] + ',';
+                }
+            }
+
+            line = line.slice(0, -1);
+            str += line + '\r\n';
+        }
+        return str;
+        
+    }
+            
+    $("#convert").click(function() {
+        var json = $.parseJSON($("#json").val());
+        var csv = JSON2CSV(json);
+        $("#csv").val(csv);
+    });
+        
+    $("#download").click(function() {
+        var json = $.parseJSON($("#json").val());
+        var csv = JSON2CSV(json);
+        window.open("data:text/csv;charset=utf-8," + escape(csv))
+    });
+
+    </script>
+
+</head>
+<body>
+    <h1>This page does nothing....</h1>
+</body>
+</html>
