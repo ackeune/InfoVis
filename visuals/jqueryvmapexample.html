@@ -1,0 +1,40 @@
+$(document).ready(function() {
+    highlight = {};
+    var country_colors = {};
+    jQuery('#vmap').vectorMap({
+        map: 'world_en',
+        enableZoom: true,
+        showTooltip: true,
+        color: '#f4f3f0',
+        onRegionClick: function(element, code, region) {
+            country_colors[code] = '#8EE5EE';
+             $('#vmap').vectorMap('set', 'colors', country_colors);
+            editStroke(code);
+            /*if(highlight[code]!=='#0000ff'){
+                highlight[code]='#0000ff';
+                $('<li id=\"li_'+code+'\"></li>').html(region).appendTo($('#location-selected'));
+            } else {
+                highlight[code]='#f4f3f0';
+                $('#li_'+code).remove();
+            }
+            $('#vmap').vectorMap('set', 'colors', highlight);*/
+        },
+         onRegionOut: function(event, code, region){
+             $('#vmap').vectorMap('set', 'colors', country_colors);
+         },
+    });
+    
+    function editStroke(code) {
+        var countries = $('#vmap').data('mapObject').countries;
+       
+        if (window.SVGAngle) {
+            countries[code].setAttribute("stroke", "#cb2143");
+            countries[code].setAttribute("stroke-width", 5);
+            countries[code].setAttribute("stroke-opacity", 1);
+        } else {
+            countries[code].stroked = true;
+            countries[code].strokeColor = "#f00";
+        }
+           
+    }
+});
