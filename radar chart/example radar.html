@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <style type="text/css">
+            body {
+                font: 12px Verdana, Palatino, Helvetica, sans;
+                background: #fdfdfd;
+            }
+            h1 {
+                font-weight: normal;
+                font-size: 4em;
+                margin: 0 0 0;
+                color: #444;
+            }
+            .timelabel {
+                font-weight: normal;
+                font-size: 3em;
+                margin: 0 0 0;
+                color: #444;
+            }
+            .back {
+                stroke: #fdfdfd;
+                stroke-width: 2.5;
+            }
+
+            path {
+                fill: none;
+                stroke-width: 2;
+            }
+
+            path.label {
+                stroke-width: 5;
+            }
+            path.ma {
+                fill: #88f;
+                stroke: none;
+            }
+            path.mi {
+                fill: #fdfdfd;
+                stroke: none;
+            }
+            path.me {
+                fill: none;
+                stroke: #00f;
+                stroke-linecap: round;
+            }
+
+            .Au {
+                stroke: #ff7f0e;
+                color: #ff7f0e;
+                font-weight: bold;
+            }
+            .Be {
+                stroke: #ffbb78;
+                color: #ffbb78;
+                font-weight: bold;
+            }
+            .Fi {
+                stroke: #2ca02c;
+                color: #2ca02c;
+                font-weight: bold;
+            }
+            .Fr {
+                stroke: #98df8a;
+                color: #98df8a;
+                font-weight: bold;
+            }
+            .Ge {
+                stroke: #d62728;
+                color: #d62728;
+                font-weight: bold;
+            }
+            .Gr {
+                stroke: #ff9896;
+                color: #ff9896;
+                font-weight: bold;
+            }
+            .Ir {
+                stroke: #9467bd;
+                color: #9467bd;
+                font-weight: bold;
+            }
+            .It {
+                stroke: #8c564b;
+                color: #8c564b;
+                font-weight: bold;
+            }
+            .Lu {
+                stroke: #7f7f7f;
+                color: #7f7f7f;
+                font-weight: bold;
+            }
+            .Ne {
+                stroke: #c7c7c7;
+                color: #c7c7c7;
+                font-weight: bold;
+            }
+            .Po {
+                stroke: #bcbd22;
+                color: #bcbd22;
+                font-weight: bold;
+            }
+            .Sp {
+                stroke: #dbdb8d;
+                color: #dbdb8d;
+                font-weight: bold;
+            }
+            .hidden {
+                stroke: none;
+            }
+
+            .q {
+                font-size: x-large;
+                z-index: 10;
+            }
+            .q:hover {
+                color: #444;
+            }
+            </style>
+    </head>
+
+    <body>
+        <div style="width: 30%; position: relative; height: 70%;">
+            <table style="padding: 7px; border-spacing: 7px;" id="cselector"></table>
+        </div>
+        <div style="position: fixed; left: 10%; top: 10px; bottom: 50px;">
+            <div id="graph"></div>
+        </div>
+		
+        <script type="text/javascript">
+        (function () {
+        var dat = [1,2,1.5,3,0.5];
+        //var dat;
+        //for (i = 0; i < 5; i += 1) {
+        //    dat[0][i] = randomFromTo(0,20);
+        //    dat[1][i] = randomFromTo(0,20);
+        //}
+        
+            //var labels = ["Coffee", "Jeans", "1hr prepaid call", "Bread", "Cinema ticket"],
+            var countries = ["Austria", "Belgium", "Finland", "France", "Germany",
+                    "Greece", "Ireland", "Italy", "Luxembourg", "Netherlands",
+                    "Portugal", "Spain"],
+            measures = ["d", "int", "s", "g", "inv", "inf", "u"],
+            labels = ["Debt [%GDP]",
+                "Interest [%]", "Surplus [%GDP]", "GDP growth [%]",
+                "Investments [%GDP]", "Inflation [%]", "Unemployment [%]"],
+            margin = 30,
+            width = window.innerWidth * 0.7,
+            height = window.innerHeight - 60,
+            r = (d3.min([width, height]) / 2) - 1.5 * margin,
+            svg = d3.select("#graph")
+                .append("svg:svg")
+                .attr("height", height)
+                .attr("width", width),
+            ctr = svg.append("svg:g").attr("transform", "translate(" + width/2 +
+                "," + height/2 + ")");
+                
+        // add countries to legend
+        $.each(countries, function(i, c) {
+            var cid = c.substr(0, 2),
+                tr = d3.select("#cselector").append("tr");
+            tr.append("td").append("input")
+                .attr("type", "checkbox")
+                .on("click", function() { toggleLegend(cid); });
+            tr.append("td").attr("class", "label-" + cid)
+                .style("font-size", "larger").html(c);
+        });
+
+        //toggle countries from legend
+        function toggleLegend(cid) {
+            var p = d3.selectAll("path." + cid),
+                c = p.classed("hidden"),
+                n = c ^ true;
+            p.classed("hidden", n);
+            d3.select("td.label-" + cid).classed(cid, !n);
+        }
+        
+        // load data
+        d3.json("eu.json", function(json) {
+            var minses = $.map(measures, function(m) {
+                    return d3.min($.map(json, function(d) {
+                        return d[1][m].mi;
+                    }));
+                }),
+                maxes = $.map(measures, function(m) {
+                    return d3.max($.map(json, function(d) {
+                        return d[1][m].ma;
+                    }));
+                }),
+                scales = $.map(measures, function(m, i) {
+                    return d3.scale.linear()
+                        .domain([minses[i], maxes[i]])
+                        .range([margin, r]).nice();
+                })
+                axes = $.map(measures, function(m, i) {
+                    return d3.svg.axis().scale(scales[i]).orient("left")
+                        .tickSize(0);
+                });
+        })
+        
+                
+        var scales = $.map(dat, function(m, i) {
+                return d3.scale.linear()
+                    .domain([0, 5])
+                    .range([margin, r]).nice();
+            })
+            axes = $.map(dat, function(m, i) {
+                return d3.svg.axis().scale(scales[i]).orient("left");
+            });
+        
+        
+        function angle(i) {
+            return i * (2 * Math.PI / dat.length) +
+                Math.PI/dat.length;
+        }
+
+        function line(f) {
+            return d3.svg.line()
+                .interpolate("cardinal-closed")
+                .tension(0.85)
+                .x(function(e, i) {
+                    var l = scales[i%measures.length](f(e.value));
+                    return Math.sin(angle(i)) * l;
+                })
+                .y(function(e, i) {
+                    var l = scales[i%measures.length](f(e.value));
+                    return Math.cos(angle(i)) * l;
+                });
+        }
+
+		//draw lines
+	    ctr.selectAll("path")
+            .data([dat])
+            .enter()
+            .append("svg:path")
+            .attr("fill", "steelblue")// filled shape
+            .attr("stroke", "steelblue")// colour outline
+            .attr("opacity", 0.5)// transparency 0.0 transparent 1.0 opaque 
+            .attr("d", function(e) {
+                return line(function(d) { return d[m]; })(e) + "Z";
+            });
+        
+        
+        //put the label names in the graph
+        ctr.selectAll("text.label")
+        .data(labels)
+        .enter()
+        .append("svg:text")
+        .attr("class", "label")
+        .attr("transform", function(d, i) {
+            var fac = i == 1 || i == 5 ? 1.04 : 1.06,
+            x = Math.sin(angle(i)) * fac*r,
+            y = Math.cos(angle(i)) * fac*r;
+            return "translate(" + x + "," + y + ")";
+        })
+        .attr("text-anchor", function(d, i) {
+            if(angle(i) % Math.PI == 0) {
+            return "middle";
+            } else if(angle(i) < Math.PI) {
+            return "start";
+            } else {
+            return "end";
+            }
+        })
+        .text(function(d) { return d; });
+
+        })();
+        </script>
+    </body>
+</html>
