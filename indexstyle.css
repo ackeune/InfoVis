@@ -95,7 +95,7 @@ p.info {
 }
 
 #location-selected {
-    height: 195px;
+    height: 190px;
     float:left;
     margin: 0px;
     margin-left: 10px;    
@@ -107,7 +107,8 @@ p.info {
 #country {
     background-color: #111111;
 	width: 240px;
-	height: auto;
+	height: 30x;
+    max-height:50px;
     float: left;
 	font-size: 10px;
 	border: 1px solid black;
@@ -119,4 +120,6 @@ p.info {
      top: 250px; 
      left: 300px;*/
 }
+
+
 

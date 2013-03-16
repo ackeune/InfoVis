@@ -10,8 +10,9 @@
         <!-- ze worden allemaal ge-prefixed met "sessvars."-->
         <script type="text/javascript" src="sessvars.js"></script>
         <!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>-->
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        
+        
         <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
         <!-- <script type="text/javascript" src="fisheye.js"></script> -->
         <!-- <script type="text/javascript" src="qtip1.js"></script>-->
@@ -23,11 +24,15 @@
         <script type="text/javascript" src="jqvmap/jquery.vmap.world.js"></script>
         <!-- sugar.js breekt met jqueryvmap dus underscore -->
         <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
-
         
-        <link href="indexstyle.css" rel="stylesheet" type="text/css" />
-        <link href="jqvmap/jqvmap.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="chosen.js"></script>
 
+                
+        <link type="text/css" rel="stylesheet" href="chosen.css" />
+        <link type="text/css" rel="stylesheet" href="jqvmap/jqvmap.css" />
+        <link href="indexstyle.css" rel="stylesheet" type="text/css" />
+        
+        
     </head>
     <body>
     
@@ -52,7 +57,7 @@
                                 Country stats:
                             </p>
                             <p id="none">
-                                Hover over an active country for info.                                
+                                Hover over a colored country for info.                                
                             </p>
                         </div>
                     </div>
@@ -62,11 +67,11 @@
                             <p class="info" >
                                 Select countries:
                             </p>
-
+                            
                             <div id="countries">
-                                <select id="country" name="countrySelector"></select>
+                                <select id="country" class="chzn-select" name="countrySelector" size="1" ></select>
                             </div>
-
+                            
                         </div>
                         <div class="subsidetomapblock">
                             <ul id="location-selected"  ></ul>
@@ -82,8 +87,7 @@
                        
         
             
-            <div id="secondtab">
-                <a id="secondtabsection"></a>
+            <div id="secondtab">                
                     Second tab </br>                    
                     
                     <script>                    
@@ -105,7 +109,7 @@
                             var promiseColor =  $.when(getCountryColorValues(["cappuccino", "bread", "jeans","cinema"]));
                             
                             $.when(promiseColor).then(function() {
-                                var promiseMap = $.when(makeMap());
+                                var promiseMap = $.when(makeMap()); // maak map
                                 
                                 function makeMap() {
                                      //alert("We got data: ");
@@ -138,7 +142,7 @@
                                                     var active = isNumber(sessvars.ccValues[code]);  // data voor land
                                                     if (active) {
                                                         $('#tooltipinfo #' + code).remove();
-                                                        $('#tooltipinfo').append('<p id=none>' + "Hover over an active country for info." + '</p>');
+                                                        $('#tooltipinfo').append('<p id=none>' + "Hover over a colored country for info." + '</p>');
                                                     }
                                                  },                                         
                                                  onRegionOver: function(element, code, region) {
@@ -173,7 +177,9 @@
                                         else {
                                         $('#country').append('<option value=\"'+index+'\" disabled>'+sessvars.codeToName[index]+'</option>');
                                         }
+                                         
                                 }
+                                $(".chzn-select").chosen();
                                 <?php // zet de grafische selectie van de vorige pagina (de selecties) opnieuw in de huidige pagina (first tab)
                                 if(isset($_POST['countries'] ) ) {      
                                     if (is_array($_POST['countries'])) {
@@ -199,7 +205,11 @@
                                     document.getElementById("secondtab").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[ccs[i]] + " </br>";
                                 }
                                 // als je in de selectbox selecteert
-                                $('#country').on('change', function() {console.log(this), selectCountry(this);});                   
+                                $('#country').on('change', function() {
+                                    //alert(this);
+                                    console.log(this); 
+                                    selectCountry(this);
+                                });                   
                                 //console.log(sessvars.codeToName);                    
                                  console.log(sessvars.codeToName);   
                             
@@ -209,17 +219,21 @@
                     });
                             
                     promise.fail(function(){
-                        alert("FAIL We not got data.. ");
+                        alert("FAIL We did not got data.. ");
                     });   
                     
                 </script>   
-         
+            
             <p> 
                 You selected from the map: 
             </p>
+            
+           
         </div> <!-- id = secondttab -->
         
     </div> <!-- id = wrapper -->
+    <a name="secondtabsection">...</a>
+   
     
     </body>
 </html>     

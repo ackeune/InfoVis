@@ -12,6 +12,9 @@ if (!count) {
     count = 0;
 }
 
+/////////   needed:
+///////// lijst me landen afkortingen synnoniemen (GB/UK enz.)
+
 //////////
 // merged_db inlezen
 /////////
@@ -137,7 +140,7 @@ function putStroke(code, region) {
     if (active) {
         if (window.SVGAngle) {
             countries[code].setAttribute("stroke", "#79230b");
-            countries[code].setAttribute("stroke-width", 4);
+            countries[code].setAttribute("stroke-width", 3);
             countries[code].setAttribute("stroke-opacity", 1);
         } else {
             countries[code].stroked = true;
@@ -191,8 +194,11 @@ function selectCountry(cc) {
         li.appendChild(text);
         li.setAttribute('id', 'li_' + ccV);        
         li.setAttribute('onclick', 'deselectCountry(\"' + input.value + '\");');
-        ul.appendChild(li);
-
+        
+        
+        //ul.appendChild(li);
+        $('#location-selected').append(li);
+        
         count++;
         checkButton(ccV);
     }
