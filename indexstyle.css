@@ -1,0 +1,122 @@
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-size: 11px;
+	color: #c8c7c1;
+	background-color: #111111;
+	/*background-image: url(images/bg.png)*/
+}
+
+p.info {
+    font-size: 12px;
+    font-style: oblique;
+}
+
+#header {
+    font-size: 13px;
+    text-align: center;
+    width: 990px;
+	padding-top: 15px;
+	padding-right: 16px;
+	padding-bottom: 16px;
+	padding-left: 16px;
+	margin-top: 11px;
+	margin-right: auto;
+	margin-bottom: 0px;
+	margin-left: auto;
+    background-color: #808080;
+}
+
+#wrapper {
+	width: 990px;
+	padding-top: 15px;
+	padding-right: 16px;
+	padding-bottom: 16px;
+	padding-left: 16px;
+	border: 1px solid #393833;
+	margin-top: 11px;
+	margin-right: auto;
+	margin-bottom: 0px;
+	margin-left: auto;
+	background-image: url(images/wrapper_bg2.jpg);
+    background-repeat: repeat;
+	clear: both;
+	overflow: auto;
+    padding-bottom:10px;
+}
+
+#my_jqvmap {
+	background-image: url(images/mapbg_yellow.png);
+	height: 418px;
+	width: 679px;
+	margin: 10px;
+	float: left;
+    border: 1px solid #393833;  
+}
+
+#firsttab {
+    width: 990px;
+	min-width: 990px;
+	float: left;
+}
+
+
+#secondtab {
+    text-align: left;
+    margin-top: 11px;
+    idth: 990px;
+	min-width: 990px;
+	float: left;
+}
+
+#tooltipinfo {
+    width: 250px;
+    height: 100px;
+    border: 1px solid black;
+}
+
+
+#sidetomap {
+    height: 418px;
+    width: 275px;
+    float:left;
+    margin-top: 10px;    
+    border: 1px solid black;
+    -webkit-box-flex: 1;
+}
+
+.subsidetomapblock {
+    width: 250px;
+    float: left;
+    margin: 5px;    
+    border: 1px solid black;
+}
+
+#location-selected {
+    height: 195px;
+    float:left;
+    margin: 0px;
+    margin-left: 10px;    
+    padding-left: 10px;
+    text-align:left;
+    border: 1px solid black;
+}
+
+#country {
+    background-color: #111111;
+	width: 240px;
+	height: auto;
+    float: left;
+	font-size: 10px;
+	border: 1px solid black;
+	font-family: Verdana, Geneva, sans-serif;
+	color: #e7e3d0;
+    text-align:left;
+    position:relative;
+   /* position:absolute;
+     top: 250px; 
+     left: 300px;*/
+}
+

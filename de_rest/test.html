@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Trade your Life test</title>
+		
+		<!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>-->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+        
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <!-- <script type="text/javascript" src="fisheye.js"></script> -->
+    
+    <script type="text/javascript" src="qtip1.js"></script>
+    
+     <script type="text/javascript" src="mycode.js"></script>  
+     
+    <script type="text/javascript" src="jqvmap/jquery.vmap.js"></script>
+    <script type="text/javascript" src="jqvmap/jquery.vmap.world.js"></script>
+    
+    
+   
+        
+        
+    <link href="teststyle.css" rel="stylesheet" type="text/css" />
+    <link href="jqvmap/jqvmap.css" rel="stylesheet" type="text/css" />
+        
+    </head>
+    <body>	
+    
+    <div id="header">
+            Here be some header
+    </div>
+        
+	<div id="wrapper">
+        
+        <div id="firsttab" >
+            First tab </br>
+            
+            <div id="my_jqvmap" class="jqvmap">               
+            </div>
+            
+            <div id="sidetomap">
+            
+                <div class ="subsidetomapblock">
+                    <div id="tooltipinfo"  >
+                        <p class="info"> Country info: </p>
+                        <p id="none">None</p>
+                    </div>
+                </div>
+
+                <div class ="subsidetomapblock">
+                    <p class="info" >Select countries: </p>                    
+               
+                        <div id="countries">
+                          
+                                <select id="country">	                                
+                                </select>
+                           
+                        </div>
+                                    
+                </div>
+                <div class="subsidetomapblock">                                          
+                    <ul id="location-selected"  >                        
+                    </ul>
+                </div> 
+            </div> 
+        </div>
+            <script>
+            
+           
+                
+            $('a[href]').qtip(
+            {
+                content: 'Link',
+                show: 'mouseover',
+                hide: 'mouseout'
+            });
+                   
+               $('#jqvmap1_us').qtip({
+                   content: '..........',
+                   show: 'mouseover',
+                    hide: 'mouseout',
+                
+                   position: {
+                        type: 'static',
+                        container: $('.tooltipinfo'),
+                   }
+                   
+                });
+           
+            </script>
+            
+        
+        <div id="secondtab">
+            Second tab </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            h </br>
+            
+        </div>
+        
+        
+    </div>
+    
+    </body>
+</html>     

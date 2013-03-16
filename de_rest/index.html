@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+		<style>
+        
+            /* Note: css styles will be overwritten by D3 attributes  */
+            
+            body { /* HTML element selector */
+                background-color: #FBF2EF;
+            }
+
+			p {
+                font-size: 12px;
+                background-color: white;
+                color: black;
+            }
+            
+            pink {
+                font-size: 14px;
+                color: pink;
+                font-style: oblique;
+            }
+            #rect-demo { /* id selector,  used to specify a style for a single, unique element */
+                fill: red;
+                stroke: black;
+            }
+            
+            .barplot { /* class selector, used to specify a style for a group of elements */
+                background-color: #e5eecc;
+                fill: #8ac007;
+            }
+            
+            #maps { /* id selector,  used to specify a style for a single, unique element */               
+                background-color: #364765;
+            }
+            
+            .bar {
+              fill: steelblue;
+            }
+            
+            .xaxis path,
+            .xaxis line {
+                fill: none;
+                stroke: black;                
+                stroke: black;                
+            }
+            
+            .xaxis text {
+                font-family: sans-serif;
+                font-size: 9px;
+            }
+            
+            .yaxis path,
+            .yaxis line {
+                fill: none;
+                stroke: black;                
+                stroke: black;                
+            }
+            
+            .yaxis text {
+                font-family: sans-serif;
+                font-size: 10px;
+            }
+            
+            
+            /*svg {
+                shape-rendering: crispEdges;
+            }*/
+		</style>
+		
+        <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<script type="text/javascript" src="fisheye.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        
+        
+        <div id = "rect-demo"></div>
+        
+        <div id = "bar-demo"> </div>
+        
+        <div id = "group-demo"> </div>
+        
+        <div id = maps>
+            <div id = "map-demo">            
+            </div>
+            <pink>Click to zoom, when zoomed: click in middle to zoom out, other areas to pan (slide) </pink>
+            
+            <br>
+            
+            <div id="map-world"> </div>
+            <pink> A world map </pink>
+            
+            <div id="map-world2"> </div>
+            <pink> A 2nd world map </pink>
+            
+         </div>
+        
+        <div id="bars-example">
+            
+          </div>
+          
+         <p id="debug">
+            <b>Debug info</b>
+            <br>
+         </p>
+        
+        </div>
+    </head>
+    <body>	
+		
+		
+		
+        <script>
+        
+
+
+
+        
+            // d3 code
+            
+            // d3.select() can take any CSS selector as an argument
+            // d3.append() is used to add a new element as a child of the selected element
+            
+            //////////
+            // black rectangle
+            //////////
+			var rectDemo = d3.select("#rect-demo").
+                append("svg"). // inserts <svg .. > tag in div 
+                attr("width", 400).
+                attr("height", 300);
+            
+            var rect = rectDemo.append("rect").// inserts <rect .. > tag in <svg .. > tag
+                    attr("x",100).
+                    attr("y", 100).
+                    attr("height", 100).
+                    attr("width", 200);            
+            
+            rectDemo.selectAll("text").
+                data([{author: "Malevitsj"}]).
+                enter().
+                append("text").
+                attr("x", d3.select("rect").attr("x")).
+                attr("y", d3.select("rect").attr("y") ).
+                text( function(datum) { return datum.author; } );
+                
+            /////////////////
+            // bar plot
+            /////////////////
+            
+            // If the data is a simple array of numbers, the scale itself can be passed to 
+            // the attr method: attr("x", xScale)            
+            var xScale = d3.scale.linear().
+                domain([0,200]). // data min and max
+                range([0,100]); // width of the diagram
+
+            var booksData = [   {year:2006, books: 54},
+                                {year:2007, books:43},
+                                {year:2008, books:41},
+                                {year: 2009, books: 44},
+                                {year: 2010, books: 35},
+                                {year: 2011, books:41}
+                            ];
+            var barWidth = 40;
+            var diagramWidth = (barWidth + 10) * booksData.length;
+            var diagramHeight = 200;
+            var xAxisHeight = 20;
+            // d3.scale.linear() returns a function
+            // xFun: array index --> x coordinate
+            var xFun = d3.scale.linear().
+                        domain([0, booksData.length]).
+                        range([222, diagramWidth+222]);
+            // yFun: books --> height
+            var yFun = d3.scale.linear().       // maximum of books for all entries in booksData
+                        domain([0, d3.max(  booksData, // d3.max() takes an optional accessor as its second argument
+                                            function(datum) { 
+                                                return datum.books;
+                                            })]).
+                        rangeRound([0, diagramHeight]);
+            
+            var barDemo = d3.select("#bar-demo").
+                append("svg").
+                attr("width", diagramWidth+222).
+                attr("height", diagramHeight+xAxisHeight).
+                attr("class", "barplot"); // allowing stylesheets to be applied to the element 
+            
+            //document.getElementById("debug").innerHTML += "selected #bar-demo <br>"; 
+
+            // put in the bars (rects)
+            barDemo.selectAll("rect").
+                data(booksData).
+                enter().
+                append("rect").
+                attr("x", function(datum, index) { return xFun(index); }).
+                attr("y", function(datum) { return diagramHeight - yFun(datum.books); }).
+                attr("height", function(datum) { return yFun(datum.books); } ).
+                attr("width", barWidth).
+                attr("fill", "#3284c4");
+            
+            
+            //debug
+            document.getElementById("debug").innerHTML += "barDemo var created <br>";             
+            document.getElementById("debug").innerHTML += "\nHoeveelheid books: " + booksData.length;
+            
+            // put in the numbers (text) 
+            barDemo.selectAll("text").
+                data(booksData).
+                enter().
+                append("text").
+                attr("x", function(datum, index) { return xFun(index) ; } ).
+                attr("y", function(datum) { return diagramHeight - yFun(datum.books); } ).
+                attr("dx", barWidth/2).
+                attr("dy", "1.2em").
+                attr("text-achor","middle"). //  characters  aligned such that the middle of the text string is at the current text position.
+                text( function(datum) { return datum.books; } ).
+                attr("fill", "white");
+            
+            // put in x axis (text)           
+            barDemo.selectAll("text.xAxis").
+              data(booksData).
+              enter().append("text").
+              attr("x", function(datum, index) { return xFun(index) + barWidth; }).
+              attr("y", diagramHeight+xAxisHeight).
+              attr("dx", -barWidth/2).
+              attr("text-anchor", "middle").
+              attr("style", "font-size: 12; font-family: Helvetica, sans-serif").
+              text(function(datum) { return datum.year;}).
+              attr("fill","black");              
+                
+            
+            /////////////////
+            // circles & rects group example
+            /////////////////
+            
+            var circleData = [  { "cx": 20, "cy": 20, "radius": 20, "color": "green"},
+                                { "cx": 70, "cy": 70, "radius": 20, "color": "purple"}];
+            var rectangleData = [   {"rx": 110, "ry": 110, "height": 30, "width":30, "color":"blue"},
+                                    {"rx": 160, "ry": 160, "height": 30, "width":30, "color":"red"}];
+            
+            // create general container in "group-demo" div tag  + groups
+            var svgContainer = d3.select("#group-demo").
+                                append("svg").
+                                attr("width",250).
+                                attr("height",200);
+                                
+            var circleGroup = svgContainer.append("g");
+            var rectangleGroup = svgContainer.append("g").
+                                    attr("transform", "skewX(10)");
+            
+            var circles = circleGroup.selectAll("circle").
+                                data(circleData).
+                                enter().
+                                append("circle");
+                                
+            var circleAttributes = circles.
+                                    attr("cx", function(datum) {return datum.cx; }).
+                                    attr("cy", function(datum) { return datum.cy;}).
+                                    attr("r", function(datum) { return datum.radius;}).
+                                    style("fill", function(datum) { return datum.color; });
+            
+            var rectangles = rectangleGroup.selectAll("rect").
+                                data(rectangleData).
+                                enter().
+                                append("rect").
+                                attr("x", function(datum) {return datum.rx; }).
+                                attr("y", function(datum) { return datum.ry;}).
+                                attr("height", function(datum) { return datum.height;}).
+                                attr("width", function(datum) { return datum.width;}).
+                                style("fill", function(datum) { return datum.color; });
+                                
+             document.getElementById("debug").innerHTML += "<br> circles/rectangles done<br>";    
+             
+            /////////////////
+            // a geo based map
+            /////////////////
+            /*  The path element represents the outline of a shape which can be filled, 
+                stroked, used as a clipping path, or any combination of the three. 
+                ---> The d attribute defines the path data, which is a mini-language of path commands, <--- 
+                such as moveto (M), lineto (L) and closepath (Z). 
+                The path element is a generalization of all other shapes in SVG, 
+                and can be used to draw nearly anything!
+            */
+            var mapHeight = 300;
+            var mapWidth = 450;
+            
+           
+          
+            var svgMap = d3.select("#map-demo").
+                            append("svg").
+                            attr("x", 0).
+                            attr("y", 0).
+                            attr("width", mapWidth).
+                            attr("height",mapHeight);
+            
+            // draw a rect in the svg so that the map has a background/border
+            var rectMap = svgMap.append("rect").
+                            attr("x", 0).
+                            attr("y", 0).
+                            attr("width", mapWidth+2).
+                            attr("height",mapHeight+2).
+                            attr("fill", "pink");
+            
+                           
+            var groupMap = svgMap.append("g").
+                attr("id", "group-map").
+                attr("x", 2).
+                attr("y", 2).
+                attr("transform", "scale(.5, .5)");
+            
+            document.getElementById("debug").innerHTML += "Made groupMap <br>";    
+            
+            var projection = d3.geo.albersUsa();
+            document.getElementById("debug").innerHTML += "Made projection var <br>";    
+           
+            //var path = d3.geo.path(); // this is a function that takes geojson data and transforms it to svg
+            var path = d3.geo.path().projection(projection);
+            
+            var mapColors = d3.scale.linear().domain([1,12]).range(['pink', '#304057']);
+            var centered;
+            
+            document.getElementById("debug").innerHTML += "Path: " + path + " <br>";  
+            
+            // "https://gist.github.com/mshafrir/2646763/raw/f2a89b57193e71010386a73976df92d32221d7ba/states_hash.json"            
+            d3.json("us-states.json", function(error, json) {
+                if (error) {  
+                    document.getElementById("debug").innerHTML += "Error loading map file <br>"; 
+                    return console.warn(error); 
+                }
+                console.log(json);
+                
+                groupMap.selectAll("path").   
+                    data(json.features).
+                    enter().
+                    append("path").
+                    attr("id", function(data) { return data.properties.name; }). // name of states
+                    attr("d", path). // svg path                   
+                    //style("fill", "#304057").
+                    style("fill", function(data) { // fill based on state name length
+                                    return mapColors(data.properties.name.length);
+                                    }).                        
+                    attr("stroke", "black").
+                    attr("stroke-width", 2).
+                    on("click", clickFun); // click is a function
+                    
+                document.getElementById("debug").innerHTML += "Put data in groupMap var  <br>";        
+            });
+            
+        // the zoom function, not 100% sure how this works
+        function clickFun(d) {
+            var x = 0, y = 0, k = 0.3;
+            if (d && centered !== d) {
+                var centroid = path.centroid(d);
+                x = -centroid[0] + mapWidth/4;
+                y = -centroid[1] + mapHeight / 4;
+                k = 2;
+                centered = d;
+            }
+            else {
+                centered = null;
+            }
+            groupMap.selectAll("path").
+                classed("active", centered && function(d) { return d === centered; });
+            groupMap.transition().
+                duration(1000).
+                attr("transform", "scale("+ k + ") translate (" + x + mapWidth/2 + "," + y + ")").
+                attr("stroke-width", 1.5/k);
+            
+        }
+        
+        /////////////
+        // world map
+        /////////////
+        
+        var svgMapWorld = d3.select("#map-world").
+                            append("svg").
+                            attr("x", 0).
+                            attr("y", 0).
+                            attr("width", 900).
+                            attr("height",500);
+         
+        var groupMapWorld = svgMapWorld.append("g").
+                attr("id", "group-map-world").
+                attr("x", 2).
+                attr("y", 2);
+                //attr("transform", "scale(.7, .7)");
+                
+        d3.json("all-countries.json", function(error, collection) {
+        
+            if (error) {  
+                document.getElementById("debug").innerHTML += "Error loading world map file <br>"; 
+                return console.warn(error); 
+            }
+            console.log(collection);
+        
+            groupMapWorld.selectAll("path").
+                data(collection.features).
+                enter().
+                append("path").
+                    attr("stroke", "black").
+                    attr("id", function(data) { return data.properties.name; }). 
+                    attr("class", "countries").
+                    attr("d", d3.geo.path().projection(d3.geo.mercator())).
+                    style("fill", function(d) { return '#'+Math.floor(d.properties.name.charCodeAt(0)/100*4620980).toString(16); });
+                    //on('click', function(d) { alert ( "id: " +  this.id );});
+                    
+            var baseWidth = 5;
+            var scaleFactor = 1.2;
+            
+            // d3.select("rect").attr("x")
+            d3.select("#group-map-world").selectAll("path")
+                .on('click', function(d) {              
+                    alert ( "BB = " + this.getBBox().x + " " + this.getBBox().y);
+                    // getBBox() is a native SVG element method
+                    var bbox = this.getBBox(),
+                        centroid = [bbox.x + bbox.width/2, bbox.y + bbox.height/2],
+                        zoomScaleFactor = baseWidth / bbox.width,
+                        zoomX = -centroid[0],
+                        zoomY = -centroid[1];
+
+                    // set a transform on the parent group element
+                    d3.select("#group-map-world")
+                        .attr("transform", "scale(" + scaleFactor + ")" +
+                            "translate(" + zoomX + "," + zoomY + ")");
+                });    
+        });
+        
+        
+         /////////////
+        // world map 2
+        /////////////
+        var fisheye = d3.fisheye.circular()
+            .radius(200)
+            .distortion(2);
+        
+        
+            
+        var svgMapWorld2 = d3.select("#map-world2").
+                            append("svg").
+                                attr("x", 0).
+                                attr("y", 0).
+                                attr("width", 900).
+                                attr("height",500).
+                                attr("pointer-events", "all").
+                            append("g")
+                                .call(d3.behavior.zoom().on("zoom", redraw));
+                                
+                                
+                            
+       
+        
+        
+        
+        var groupMapWorld2a = svgMapWorld2.append("g").
+                attr("id", "group-map-world2").
+                attr("class", "LifeExpectancyCountry").               
+                attr("x", 0).
+                attr("y", 0);
+                
+          groupMapWorld2a.append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("opacity", .5)
+                    .attr("width", 900)
+                    .attr("height",500);
+      
+        var vis = groupMapWorld2a;           
+        function redraw() {
+          trans=d3.event.translate;
+          scale=d3.event.scale;
+          vis.attr("transform",
+              "translate(" + trans + ")"
+              + " scale(" + scale + ")");
+        }
+        
+        var groupMapWorld2 = groupMapWorld2a;
+        
+        d3.json("all-countries.json", function(error, collection) {
+        
+            if (error) {  
+                document.getElementById("debug").innerHTML += "Error loading world map file <br>"; 
+                return console.warn(error); 
+            }
+            console.log(collection);
+        
+            groupMapWorld2.selectAll("path").
+                data(collection.features).
+                enter().
+                append("path").
+                    attr("stroke", "black").
+                    attr("id", function(data) { return data.properties.name; }).   
+                    //style("fill", function(d) { return '#'+Math.floor(d.properties.name.charCodeAt(0)/100*4620980).toString(16); }).                   
+                    attr("d", d3.geo.path().projection(d3.geo.mercator().scale(500).rotate([-10,0,0])));
+          
+        });
+        
+        
+        var rows; // first
+        d3.csv("life_expectancy_per_country_CIA.csv", function(data) { // third
+            rows = data;
+            console.log(rows);            
+            doSomethingWithRows();
+        });        
+        //second
+        
+        function doSomethingWithRows() {
+             var rank = [], countryName = [], years =[];
+             console.log(rows[0]);
+             rows.map(function(d) {
+                rank.push(d.RANK);
+                countryName.push(d.COUNTRY);
+                years.push(d.YEARS);
+            })
+            //console.log(rows);
+           
+           /*groupMapWorld2.selectAll("path").
+                data(rows, function(d){return d.id;}).
+                    attr("stroke", "black").
+                    attr("id", function(data) { return data.COUNTRY; });
+                    style("fill", function(data) { return '#'+Math.floor(data.COUNTRY.charCodeAt(0)/100*4620980).toString(16); }).                   
+                    
+            */
+
+            groupMapWorld2.selectAll("path").
+                            //data(rows).
+                            attr("fill", function(d) {
+                                var fillColor = "black";
+                                
+                                //document.getElementById("debug").innerHTML += this.id + " <br>";   // json country names
+                                
+                                for(var i in countryName) { // maybe better use jQuery, for for-each loops
+                                    //console.log(countryName[i]);
+                                    //alert(countryName[i]);
+                                    if(countryName[i] == this.id){
+                                        //document.getElementById("debug").innerHTML += "same <br>"; 
+                                        this.years = years[i];
+                                        fillColor = colorLEFunction(years[i]);
+                                    }
+                                }                                
+                                return fillColor;                               
+                            })
+                           // .on("mouseover", function(){return tooltip.style("visibility", "visible");})
+                            .on("mouseover", function(d){return tooltip.text(this.id + ": " + this.years).style("visibility","visible");})
+                            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+         }
+         
+         var colorLEFunction = d3.scale.linear()
+            .domain([40, 65,90])
+            .range(["darkred", "pink", "#0b640d"]);
+ 
+        var tooltip = d3.select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "visible")
+            .style("color", "white")
+            .text("a simple tooltip");
+       
+        
+        ////////////////
+        // bar chart
+        ///////////////////
+        
+        exampleData = [   {year:2006, books: 54, english:3},
+                                {year:2007, books:43, english:10},
+                                {year:2008, books:41, english:3},
+                                {year: 2009, books: 44, english:12},
+                                {year: 2010, books: 35, english:13},
+                                {year: 2011, books:41, english:7}
+                            ];
+     
+        var barWidth = 40;
+        var diagramWidth = 3000;
+        var diagramHeight = 400;
+        var xAxisHeight = 20;
+        // d3.scale.linear() returns a function
+        
+        var xFun = d3.scale.ordinal()
+                    .rangeRoundBands([0, diagramWidth], .3);
+                  //  domain([0, exampleData.length]).
+                    //.range([0, diagramWidth]);
+      
+      
+        var yFun = d3.scale.linear().    
+                   range([diagramHeight, 0]);
+        
+        var xAxis = d3.svg.axis()
+            .scale(xFun)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(yFun)
+            .ticks(5)
+            .orient("right");
+
+    
+        var barsExample = d3.select("#bars-example").
+            append("svg"). // inserts <svg .. > tag in div 
+            attr("width", diagramWidth).
+            attr("height", diagramHeight+20);
+        
+        //document.getElementById("debug").innerHTML += "selected #bar-demo <br>"; 
+
+        
+        var allData; // first
+        d3.csv("merged_db_20130308.csv", function(error, data) { // third
+            allData = data;
+            console.log(allData);       
+            var countryArray = new Array(1);
+            var yearsArray = new Array(1);
+            data.forEach(function(d) {
+                //document.getElementById("debug").innerHTML += "d: " + d.YEARS + " <br>";  
+                countryArray.push(d.COUNTRY);
+                yearsArray.push(d.YEARS);
+                
+                document.getElementById("debug").innerHTML += "country: " + d.COUNTRY + " <br>";  
+                document.getElementById("debug").innerHTML += "years: " + d.YEARS + " <br>";  
+                if (d.COUNTRY ) {
+                    d.YEARS = +d.YEARS;
+                }
+            });      
+            
+            
+            xFun.domain(data.map(function(d) {   return d.COUNTRY ; }   ));
+            yFun.domain([0, d3.max(data, function(d) { return d["YEARS"]; })]);
+            
+            document.getElementById("debug").innerHTML += "max years: " + d3.max(data, function(d) { return d["YEARS"]; }) + " <br>";  
+    
+            
+            barsExample.selectAll(".bar")
+                .data(data)
+                .enter()
+                    .append("rect")
+                        .attr("class","bar")
+                        .attr("x", function(d) {return xFun(d.COUNTRY); })
+                        .attr("width", xFun.rangeBand())
+                        .style("fill", function(d) { if (isNaN(d.YEARS)) {
+                                                        return "red";
+                                                    }
+                                                    else {
+                                                        return this.fill;
+                                                }})
+                        .attr("y", function(d) { if (isNaN(d.YEARS)) {
+                                                        return diagramHeight - 10;
+                                                    }
+                                                    else {
+                                                        return yFun(d.YEARS);
+                                                }})
+                        .attr("height", function(d) { 
+                                                        if (isNaN(d.YEARS)) {
+                                                            return yFun(10);
+                                                        }
+                                                        else {
+                                                            return diagramHeight- yFun(d.YEARS);
+                                                        }
+                                                    });
+                                                    
+            barsExample.append("g")
+                .attr("class","xaxis")
+                //.attr("transform", "translate(200,100)rotate(180)")
+                .attr("transform", "translate(0," + (diagramHeight ) + ")")
+                .call(xAxis)
+                    .selectAll("text")  
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", -5.5)  // why...??
+                    .attr("transform", function(d) {
+                        return "rotate(90)" 
+                    });
+                
+            barsExample.append("g")
+                .attr("class", "yaxis")
+                .attr("transform", "translate(" + 10 + ",0)")
+                .call(yAxis);
+                        
+        });  
+        
+        
+           
+       
+        
+                            
+        document.getElementById("debug").innerHTML += "length of exampleData: " + exampleData.length + " <br>";  
+        
+       
+        
+        </script>
+        
+        
+    </body>
+</html>     
