@@ -5,8 +5,9 @@ body {
 	font-family: Verdana, Arial, Helvetica, sans-serif; 
 	font-size: 11px;
 	color: #c8c7c1;
-	background-color: #111111;
-	/*background-image: url(images/bg.png)*/
+	/*background-color: #404041;*/
+	background-image: url(images/background.png);
+	background-repeat: repeat;
 }
 
 p.info {
@@ -40,8 +41,9 @@ p.info {
 	margin-right: auto;
 	margin-bottom: 0px;
 	margin-left: auto;
-	background-image: url(images/wrapper_bg2.jpg);
-    background-repeat: repeat;
+	/*background-image: url(images/wrapper_bg2.jpg);
+	background-repeat: repeat;*/
+	background-color: #404041;
 	clear: both;
 	overflow: auto;
     padding-bottom:10px;

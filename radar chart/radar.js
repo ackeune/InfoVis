@@ -5,14 +5,16 @@ var series,
     w = 400,
     h = 400,
     vizPadding = {
-        top: 10,
+        top: 30,
         right: 0,
         bottom: 15,
         left: 0
     },
     radius,
     radiusLength,
+	countryColours = ['#ed1c24', '#f15a29', '#fff100', '#94e01b', '#4dd5ff', '#1e29f7', '#0e0e51', '#763cd3', '#631f4c', '#ec008b'],
     ruleColor = "#CCC";
+	
 
 var loadViz = function(){
   loadData();
@@ -31,19 +33,21 @@ var loadData = function(){
     series = [
       [],
       [],
-      []
+      [],
+	  []
     ];
 
     labels = [];
-
+    labels = ["coffee","jeans","bread","prepaid","cinema"];
     for (i = 0; i < 5; i += 1) {
         series[0][i] = randomFromTo(0,20);
         series[1][i] = randomFromTo(5,15);
         series[2][i] = randomFromTo(5,25);
+		series[3][i] = randomFromTo(10,25);
         //labels[i] = i; //in case we want to do different formatting
     }
-    labels = ["coffee","jeans","bread","prepaid","cinema"];
 
+	//TODO do this better
     mergedArr = series[0].concat(series[1]).concat(series[2]);
 
     minVal = d3.min(mergedArr);
@@ -58,6 +62,20 @@ var loadData = function(){
         series[i].push(series[i][0]);
     }
 };
+
+var findMinMax = function(array){
+	var tempMin, tempMax;
+	for(i = 0; i < array.length; i += 1){
+		tempMin = d3.min(array[i]);
+		tempMax = d3.max(array[i]);
+		if(tempMin < minVal){
+			minVal = tempMin
+		}
+		if(tempMax > maxVal){
+			maxVal = tempMax
+		}
+	}
+}
 
 var buildBase = function(){
     var viz = d3.select("#viz")
@@ -150,7 +168,8 @@ addAxes = function () {
       .text(String)
       .attr("text-anchor", "middle")
       .attr("transform", function (d, i) {
-          return (i / labels.length * 360) < 180 ? null : "rotate(180)";
+          //return (i / labels.length * 360) < 180 ? null : "rotate(180);
+		  return "rotate(90)";
       });
 };
 
@@ -164,25 +183,22 @@ var draw = function () {
   groups = vizBody.selectAll('.series')
       .data(series);
   groups.enter().append("svg:g")
-      .attr('class', 'series')
-      .style('fill', function (d, i) { //TODO make dynamic
-          if(i === 0){
-            return "green";
-          } else if(i === 1){
-            return "blue";
-          } else if(i === 2){
-            return "red";
-          }
+      .attr("class", function (d, i){
+		return 'country' + i;
+	  })
+	  /*
+	  .attr('class', 'series')
+	  
+      .style('stroke', function (d, i) { //TODO make dynamic
+		return countryColours[i]
       })
-      .style('stroke', function (d, i) {
-          if(i === 0){
-            return "green";
-          } else if(i === 1){
-            return "blue";
-          }else if(i === 2){
-            return "red";
-          }
-      });
+	  .attr('fill', function (d, i) {
+		return countryColours[i]
+	  })
+	  */
+	  
+	  .attr('opacity', 0.3);
+	  
   groups.exit().remove();
 
   lines = groups.append('svg:path')
@@ -197,8 +213,7 @@ var draw = function () {
               } //close the line
               return (i / 5) * 2 * Math.PI; //TODO numberAxes var
           }))
-      .style("stroke-width", 3)
-      .style("fill", "none");
+      .style("stroke-width", 3);
 
   groups.selectAll(".curr-point")
       .data(function (d) {
