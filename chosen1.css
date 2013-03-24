@@ -74,7 +74,7 @@
   min-width: 22px;
   height: 12px;
   font-size: 1px;
-  background: url('chosen-sprite.png') -42px 1px no-repeat;
+  /*background: url('chosen-sprite.png') -42px 1px no-repeat;*/
 }
 .chzn-container-single .chzn-single abbr:hover {
   background-position: -42px -10px;
@@ -91,18 +91,18 @@
   min-width: 22px;
 }
 .chzn-container-single .chzn-single div b {
-  background: url('chosen-sprite.png') no-repeat 0px 2px;
+ /* background: url('chosen-sprite.png') no-repeat 0px 2px;*/
   display: block;
   min-width: 22px;
   height: 100%;
 }
 .chzn-container-single .chzn-search {
-  padding: 3px 4px;
+  padding: 3px 5px;
   position: relative;
   margin: 0;
   white-space: nowrap;
   z-index: 1010;
-  min-width: 22px;
+  
 }
 .chzn-container-single .chzn-search input {
   /*background: #fff url('chosen-sprite.png') no-repeat 100% -20px;
@@ -111,13 +111,14 @@
   background: url('chosen-sprite.png') no-repeat 100% -20px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   background: url('chosen-sprite.png') no-repeat 100% -20px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   background: url('chosen-sprite.png') no-repeat 100% -20px, linear-gradient(#eeeeee 1%, #ffffff 15%);*/
-  margin: 1px 0;
+  margin: 3px 0;
   padding: 4px 20px 4px 5px;
   outline: 0;
   border: 0px solid #aaa;
   font-family: 'Oxygen', sans-serif;
   font-size: 1em;
-  min-width: 22px;
+  border-radius: 3px;
+  min-width: 210px;
 }
 .chzn-container-single .chzn-drop {
   -webkit-border-radius: 0 0 4px 4px;
@@ -168,7 +169,7 @@
   min-width: 22px;
 }
 .chzn-container .chzn-results .highlighted {
-  background-color: #3875d7;
+  background-color: #852663;
   /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3875d7', endColorstr='#2a62bc', GradientType=0 );  
   background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(20%, #3875d7), color-stop(90%, #2a62bc));
   background-image: -webkit-linear-gradient(top, #3875d7 20%, #2a62bc 90%);
@@ -221,10 +222,10 @@
   min-width: 22px;
 }
 .chzn-container .chzn-results-scroll-down span {
-  background: url('chosen-sprite.png') no-repeat -4px -3px;
+  /*background: url('chosen-sprite.png') no-repeat -4px -3px;*/
 }
 .chzn-container .chzn-results-scroll-up span {
-  background: url('chosen-sprite.png') no-repeat -22px -3px;
+  /*background: url('chosen-sprite.png') no-repeat -22px -3px;*/
 }
 /* @end */
 

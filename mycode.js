@@ -4,7 +4,8 @@ window.dataRead = false;
 var mapLoaded = false;
 
 var databaseFilename = "merged_db_20130315.csv";
-var productNames = ["cappuccino", "bread", "jeans", "cinema"];
+window.productNames = ["cappuccino", "bread", "jeans", "movie", "internet", "sneakers", "prepaid", "mcdonalds"];
+window.selectedProductNames = ["cappuccino", "bread", "jeans", "movie"];
 var countryColors = {};
 
 var count; // hoeveel landen selected
@@ -28,7 +29,6 @@ var outlineColorsCountries = [
      dummyColor].reverse();
 
 
-//countriesAndColors = [];
 
 /////////   needed:
 ///////// lijst me landen afkortingen synnoniemen (GB/UK enz.)
@@ -65,11 +65,11 @@ function loadD3Data() {
                     obj2["products"].push(new Product("cappuccino", d["Cappucinno USD"]));
                     obj2["products"].push(new Product("jeans", d["Pair of Levis jeans USD"]));
                     obj2["products"].push(new Product("bread", d["Loaf of bread USD"]));
-                    //obj2["products"].push( new Product("internet", d["Internet  USD"]));
-                    // obj2["products"].push( new Product ("sneakers", d["Nike sneakers USD"]));
-                    obj2["products"].push(new Product("cinema", d["Movie ticket USD"]));
-                    //  obj2["products"].push( new Product ("prepaid", d["1mn prepaid mobile USD"]));
-
+                    obj2["products"].push( new Product("internet", d["Internet  USD"]));
+                    obj2["products"].push( new Product ("sneakers", d["Nike sneakers USD"]));
+                    obj2["products"].push(new Product("movie", d["Movie ticket USD"]));
+                    obj2["products"].push( new Product ("prepaid", d["1mn prepaid mobile USD"]));
+                    obj2["products"].push( new Product ("mcdonalds", d["McDonalds meal USD"]));
                     sessvars.workData2.push(obj2);
                     sessvars.codeToName[d["CC"].toLowerCase()] = d["COUNTRY"];
                     // hier ergens synoniemen van codes verwerken
@@ -97,11 +97,11 @@ function loadD3Data() {
 
 function fillMatrixMinutes() {
     for (var i = 0; i < productNames.length; i++) {
-        fillMinutesMatrix2(productNames[i]);
+        fillMinutesMatrix(productNames[i]);
     }
 }
 
-function fillMinutesMatrix2(productName) {
+function fillMinutesMatrix(productName) {
     for (var i = 0; i < sessvars.workData2.length; i++) {
         for (var j = 0; j < sessvars.workData2[i]["products"].length; j++) {
             if (productName == sessvars.workData2[i]["products"][j].name) {
@@ -289,19 +289,23 @@ function checkButton(code) {
 // hier beter gelijk de kleuren berekenen (zijn nu getalswaarden voor in jqvmap)
 function getCountryColorValues(selectedProducts) {
     var deferred = $.Deferred();
-
+    
     setTimeout(function() {
 
-        if (!sessvars.ccValues || sessvars.ccValues.length == 0) {
+        if (true)/*(!sessvars.ccValues || sessvars.ccValues.length == 0) */{
             var colors = {};
             var absentColor = "#808080";
 
             var maxMinutesC;
             var maxMinutes = 0;
             var minMinutesC;
-            var minMinutes = 9999999;
-
+            var minMinutes = 999999999;
+            
+            //console.log("selectedProducts:");
+            //console.log(selectedProducts);
+            
             sessvars.workData2.forEach(function(d) {
+                
                 var totalMinutes;
                 var color;
 
@@ -312,14 +316,19 @@ function getCountryColorValues(selectedProducts) {
                     var hasAll = productsWithCost.length == selectedProducts.length;
 
                     if (hasAll) {
-                        totalMinutes = _.reduce(d['products'], function(memo, prod) {
-                            if (_.contains(selectedProducts, prod.name))
+                        //console.log("hasAll");
+                        totalMinutes = _.reduce(d["products"], function(memo, prod) {
+                            if (_.contains(selectedProducts, prod.name)) {
+                                //console.log("selectedProducts contains " + prod.name + " it has " + prod.minutes + " minutes");
                                 return memo + prod.minutes;
-                            else
-                                return 0;
+                            }
+                            else {
+                                //console.log("selectedProducts not contains " + prod.name );
+                                return memo;
+                            }
                         }, 0);
                         
-                        
+                       // console.log("totalMinutes: " + totalMinutes);
                         colors[ d["cc"].toLowerCase()] = totalMinutes;
 
                         if (totalMinutes > maxMinutes) {
@@ -339,12 +348,83 @@ function getCountryColorValues(selectedProducts) {
             console.log(maxMinutes);
             console.log(minMinutes);
             sessvars.ccValues = colors;
-            $('#my_jqvmap').vectorMap('set', 'values', sessvars.ccValues);
-            console.log("sessvars.codeToName:");
+            console.log("sessvars.ccValues in getcolors:");
+            console.log(sessvars.ccValues );
+            
+            //$('#my_jqvmap').vectorMap('set', 'values', sessvars.ccValues);
+            
                        
         }
         deferred.resolve();
     }, 1000);
+}
+
+function getCountryColorValues_noTimeOut(selectedProducts) {
+    
+
+    if (true)/*(!sessvars.ccValues || sessvars.ccValues.length == 0) */{
+        var colors = {};
+        var absentColor = "#808080";
+
+        var maxMinutesC;
+        var maxMinutes = 0;
+        var minMinutesC;
+        var minMinutes = 999999999;
+        
+        //console.log("selectedProducts:");
+        //console.log(selectedProducts);
+        
+        sessvars.workData2.forEach(function(d) {
+            
+            var totalMinutes;
+            var color;
+
+            if (isNumber(d["wage per minute"])) {
+                var productsWithCost = _.filter(d["products"], function(product) {
+                    return _.contains(selectedProducts, product.name) && isNumber(product["cost"]);
+                });
+                var hasAll = productsWithCost.length == selectedProducts.length;
+
+                if (hasAll) {
+                    //console.log("hasAll");
+                    totalMinutes = _.reduce(d["products"], function(memo, prod) {
+                        if (_.contains(selectedProducts, prod.name)) {
+                            //console.log("selectedProducts contains " + prod.name + " it has " + prod.minutes + " minutes");
+                            return memo + prod.minutes;
+                        }
+                        else {
+                            //console.log("selectedProducts not contains " + prod.name );
+                            return memo;
+                        }
+                    }, 0);
+                    
+                   // console.log("totalMinutes: " + totalMinutes);
+                    colors[ d["cc"].toLowerCase()] = totalMinutes;
+
+                    if (totalMinutes > maxMinutes) {
+                        maxMinutes = totalMinutes;
+                    }
+                    else if (totalMinutes < minMinutes) {
+                        minMinutes = totalMinutes;
+                    }
+                } else {
+                    //  colors[ d["cc"].toLowerCase()] = absentColor;
+                }
+            } else {
+                //colors[ d["cc"].toLowerCase() ] = absentColor;
+            }
+        });
+
+        console.log(maxMinutes);
+        console.log(minMinutes);
+        sessvars.ccValues = colors;
+        console.log("sessvars.ccValues in getcolors:");
+        console.log(sessvars.ccValues );
+        
+        //$('#my_jqvmap').vectorMap('set', 'values', sessvars.ccValues);
+        
+                   
+    }
 }
 
 //... 
@@ -414,4 +494,24 @@ function submitCountries() {
     }
 }
 
+ function addProductData (img)
+ {
+    if (_.contains(selectedProductNames, img.id)) {
+        img.src = 'images/icons/' + img.id + '-deseleted.png';
+        selectedProductNames = _.without(selectedProductNames, img.id) ;
+    }
+    else {
+         img.src = 'images/icons/' + img.id + '-seleted.png';
+         selectedProductNames.push(img.id) ;
+    }
+     console.log(selectedProductNames);
+     
+     //getCountryColorValues(selectedProductNames);
+    getCountryColorValues_noTimeOut(selectedProductNames);
+    
+    
+    $('#my_jqvmap').vectorMap('set', 'values', sessvars.ccValues);
+    
+    
+ }  
 

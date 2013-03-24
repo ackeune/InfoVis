@@ -58,7 +58,8 @@ p.info {
 	width: 679px;
 	margin: 10px;
 	float: left;
-    border: 1px solid #393833;  
+    border: 1px solid #cbcbcb;  
+    border-radius: 3px;
 }
 
 #firsttab {
@@ -107,6 +108,7 @@ p.info {
     padding-left: 10px;
     text-align:left;
     border: 1px solid black;
+    font-size: 13px;
 }
 
 #country {
@@ -152,4 +154,28 @@ ul#location-selected li {
   border-radius: 3px;*/
 }
 
+#bottomfirsttab {
+    width: 990px;
+    min-width: 990px;
+}
 
+#producticons {
+    width: 679px;
+    margin: 5px;
+    float: left;
+    text-align: center;
+    border-radius: 3px;
+    opacity: 0.9;
+}
+
+.producticon {
+    width: 60px;
+    height: 60px;
+    margin: 5px 1% 0px 1%; 
+    
+}
+
+#submitbutton {
+    margin-top: 0px;
+    float: right;
+}

@@ -94,8 +94,21 @@
             </div>
            
              <!--<input id="submitbutton" type="submit" name="bla" value="Show for products" disabled="true">-->
-            <a href="#secondtabsection"><img id="submitbutton" src="images/icons/show for products-2.png" width="171px" height="85px""></src></a>
-        
+             <div id="bottomfirsttab">
+                <div id="producticons">
+                    <img src="images/icons/bread-seleted.png" alt="Load of bread" class="producticon" id="bread" />
+                    <img src="images/icons/cappuccino-seleted.png" alt="Cappuccino" class="producticon" id="cappuccino" />
+                    <img src="images/icons/internet-deseleted.png" alt="Internet" class="producticon" id="internet" />
+                    <img src="images/icons/jeans-seleted.png" alt="Pair of jeans" class="producticon" id="jeans" />
+                    <img src="images/icons/mcdonalds-deseleted.png" alt="McDonald's combo meal" class="producticon" id="mcdonalds" />
+                    <img src="images/icons/prepaid-deseleted.png" alt="Prepaid" class="producticon" id="prepaid" />
+                    <img src="images/icons/sneakers-deseleted.png" alt="Sneakers" class="producticon" id="sneakers" />
+                    <img src="images/icons/movie-seleted.png" alt="Movie ticket" class="producticon" id="movie" />
+                </div>
+                <div id="submitbutton">
+                    <a href="#secondtabsection"><img id="submitbutton" src="images/icons/show for products-2.png" width="171px" height="85px""></src></a>
+                </div>
+            </div>
             
             <div id="secondtab">                
                     Second tab </br>                    
@@ -114,10 +127,11 @@
                         var $map = null; 
                         $map = $('#my_jqvmap');
                         window.countries = [];
+                        selectedProductNames = ["cappuccino", "bread", "jeans", "movie"];
 
                         var promise = $.when(loadD3Data()); // laad algemene data (merged_db)
                         $.when(promise).then(function() { // + bereken de kleuren
-                            var promiseColor =  $.when(getCountryColorValues(["cappuccino", "bread", "jeans","cinema"]));
+                            var promiseColor =  $.when(getCountryColorValues(selectedProductNames));
                             
                             $.when(promiseColor).then(function() {
                                 var promiseMap = $.when(makeMap()); // maak map
@@ -226,6 +240,12 @@
                                 
                                 $('#submitbutton').click(function() {                                    
                                     submitCountries();
+                                });
+                                
+                                $('img.producticon').click(function() {
+                                    //alert(this.id );
+                                    
+                                    addProductData(this);
                                 });
                             });
                         });
