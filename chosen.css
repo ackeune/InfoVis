@@ -2,7 +2,7 @@
 .chzn-container {
   position: relative;
   display: inline-block;
-  font-family: Verdana, Arial, Helvetica, sans-serif; 
+  font-family: 'Oxygen', Verdana, Arial, Helvetica, sans-serif; 
   font-size: 10px;
   float: left;
   zoom: 0.9;
@@ -18,8 +18,9 @@
   top: 29px;
   left: 0;
   z-index: 1010;
-   font-family: Verdana, Arial, Helvetica, sans-serif; 
+  font-family: 'Oxygen', Verdana, Arial, Helvetica, sans-serif; 
   font-size: 10px;
+  text-decoration: none;
 }
 /* @end */
 
@@ -50,7 +51,7 @@
   color: #c8c7c1;
 }
 .chzn-container-single .chzn-single span {
-  margin-right: 26px;
+  margin-right: 0px;
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -97,6 +98,7 @@
   font-family: Verdana, Arial, Helvetica, sans-serif; 
   font-size: 10px;
   background-color: #8a887b;
+  font-style: normal;
 }
 .chzn-container-single .chzn-search input {
   background: #fff url('images/chosen-sprite.png') no-repeat 100% -20px;
@@ -111,6 +113,8 @@
   border: 0px solid #c8c7c1;
   font-family: sans-serif;
   font-size: 1em;
+  font-style: normal;
+  text-decoration: none;
 }
 .chzn-container-single .chzn-drop {
   -webkit-border-radius: 0 0 3px 3px;
@@ -251,7 +255,6 @@
     background-color: #c8c7c1;
   cursor: default;
   color: #111111;
-  font-weight: bold;
 }
 .chzn-container .chzn-results .group-option {
   padding-left: 15px;

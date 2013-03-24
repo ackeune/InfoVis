@@ -32,10 +32,8 @@
         
         <script type="text/javascript" src="chosen.js"></script>
 
-        <link href='http://fonts.googleapis.com/css?family=Oxygen:400,700,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-
                 
-        <link type="text/css" rel="stylesheet" href="chosen1.css" />
+        <link type="text/css" rel="stylesheet" href="chosen.css" />
         <link type="text/css" rel="stylesheet" href="jqvmap/jqvmap.css" />
         <link href="indexstyle.css" rel="stylesheet" type="text/css" />
         
@@ -76,25 +74,22 @@
                             </p>
                             
                             <div id="countries">
-                                <select id="country" class="chzn-select" name="countrySelector" size="1" >
-                                    <option selected = "selected">
-                                        
-                                    </option>
-                                </select>
+                                <select id="country" class="chzn-select" name="countrySelector" size="1" ></select>
                             </div>
                             
                         </div>
                         <div class="subsidetomapblock">
                             <ul id="location-selected"  ></ul>
                         </div>
-                       
-                    </form>
+                        <div class="subsidetomapblock">
 
+                            <input id="submitbutton" type="submit" name="bla" value="Show for products" disabled="true">
+
+                        </div>
+                    </form>
                 </div>
             </div>
-           
-             <!--<input id="submitbutton" type="submit" name="bla" value="Show for products" disabled="true">-->
-            <a href="#secondtabsection"><img id="submitbutton" src="images/icons/show for products-2.png" width="171px" height="85px""></src></a>
+                       
         
             
             <div id="secondtab">                
@@ -191,30 +186,30 @@
                                          
                                 }
                                 $(".chzn-select").chosen();
-                                // <?php // zet de grafische selectie van de vorige pagina (de selecties) opnieuw in de huidige pagina (first tab)
-                                // if(isset($_POST['countries'] ) ) {      
-                                    // if (is_array($_POST['countries'])) {
-                                        // $i = 0;
-                                        // foreach ($_POST['countries'] as $key => $value) {
+                                <?php // zet de grafische selectie van de vorige pagina (de selecties) opnieuw in de huidige pagina (first tab)
+                                if(isset($_POST['countries'] ) ) {      
+                                    if (is_array($_POST['countries'])) {
+                                        $i = 0;
+                                        foreach ($_POST['countries'] as $key => $value) {
                                              
-                                             // echo ' ccs['.$i.'] = "'.$value.'";';
-                                             // echo 'console.log(ccs['.$i.']);';
+                                             echo ' ccs['.$i.'] = "'.$value.'";';
+                                             echo 'console.log(ccs['.$i.']);';
                                              
-                                            // $i++;
-                                        // }
-                                        // echo  ' for(var i=0; i < ccs.length; i++) {   ';
-                                        // echo ' putStroke(ccs[i],sessvars.codeToName[ccs[i]]);';  // plaatjes 
-                                        // echo '} ';
-                                    // }
-                                 // }
-                                // ?>
-                                
-                                
+                                            $i++;
+                                        }
+                                        echo  ' for(var i=0; i < ccs.length; i++) {   ';
+                                        echo ' putStroke(ccs[i],sessvars.codeToName[ccs[i]]);';  // plaatjes 
+                                        echo '} ';
+                                    }
+                                 }
+                                ?>
                                 //console.log(ccs);       
                                 //console.log("workData2:");
                                 console.log(sessvars.ccValues);
                                 console.log(sessvars.codeToName);                
-                                
+                                for(var i=0; i < ccs.length; i++) { // zet de landnamen weer in het html selector ding
+                                    document.getElementById("secondtab").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[ccs[i]] + " </br>";
+                                }
                                 // als je in de selectbox selecteert
                                 $('#country').on('change', function() {
                                     //alert(this);
@@ -223,10 +218,7 @@
                                 });                   
                                 //console.log(sessvars.codeToName);                    
                                  console.log(sessvars.codeToName);   
-                                
-                                $('#submitbutton').click(function() {                                    
-                                    submitCountries();
-                                });
+                            
                             });
                         });
                              
@@ -236,15 +228,12 @@
                         alert("FAIL We did not got data.. ");
                     });   
                     
-                    
-                        
-                    
                 </script>   
             
             <p> 
                 You selected from the map: 
             </p>
-            <div id="resultingcountries"></div>
+            
            
         </div> <!-- id = secondttab -->
     <a name="secondtabsection"></a>  

@@ -12,6 +12,24 @@ if (!count) {
     count = 0;
 }
 
+var maxNrSelectedCountries = 10;
+var dummyColor = "#ffffff"; // added so that check when too much countries added deosn't break
+var outlineColorsCountries = [
+    "#ed1c24",
+    "#f15a29",
+    "#fff100",
+    "#94e01b",
+    "#4dd5ff",
+    "#1e29f7",
+    "#0e0e51",
+    "#763cd3",
+    "#631f4c",
+    "#ec008b",
+     dummyColor].reverse();
+
+
+//countriesAndColors = [];
+
 /////////   needed:
 ///////// lijst me landen afkortingen synnoniemen (GB/UK enz.)
 
@@ -54,7 +72,8 @@ function loadD3Data() {
 
                     sessvars.workData2.push(obj2);
                     sessvars.codeToName[d["CC"].toLowerCase()] = d["COUNTRY"];
-
+                    // hier ergens synoniemen van codes verwerken
+                    
                     // de html selector stuff
                     //$('#country').append("<option value=\"" + d["CC"] + "\">" + d["COUNTRY"] + "</option>");
 
@@ -125,7 +144,11 @@ function removeStroke(code) {
         countries[code].stroked = false;
         countries[code].strokeColor = "#f00";
     }
-    strokedCountries[code] = false;
+ 
+    var countryAndColor = _.find(countriesAndColors, function(el){ return el.code === code; });
+    outlineColorsCountries.push(countryAndColor.color);
+    countriesAndColors = _.reject(countriesAndColors, function(el) { return el.code === code; });
+    
     $('#li_' + code).remove();
     count--;
     checkButton(code);
@@ -138,16 +161,19 @@ function putStroke(code, region) {
 
     var active = isNumber(sessvars.ccValues[code]);
     if (active) {
+        var newColor = outlineColorsCountries.pop();
+        
         if (window.SVGAngle) {
-            countries[code].setAttribute("stroke", "#79230b");
+            countries[code].setAttribute("stroke", newColor);
             countries[code].setAttribute("stroke-width", 3);
             countries[code].setAttribute("stroke-opacity", 1);
-        } else {
+        } 
+        else {
             countries[code].stroked = true;
-            countries[code].strokeColor = "#f00";
+            countries[code].strokeColor = newColor;
         }
-        strokedCountries[code] = true;
-
+   
+        countriesAndColors.push({code: code, color: newColor});
         $('#location-selected').append('<li id=\"li_' + code + '\" onclick=\"deselectCountry(\'' + code + '\')\;\"><input type=\"hidden\" name=\"countries\[\]\" value=\"' + code + '\" \/>' + sessvars.codeToName[code] + ' </li>');
 
         count++;
@@ -163,17 +189,23 @@ function selectCountry(cc) {
     ccV = cc.value.toLowerCase();
 
     //var countries = $('#my_jqvmap').data('mapObject').countries;
-    if (!strokedCountries[ccV]) {
-        strokedCountries[ccV] = true;
+   
+    if (!(_.some(countriesAndColors, function(el) {return el.code === ccV;}))){
+        //console.log(ccV + " kwam nog niet voor");
+        
+        
+        var newColor = outlineColorsCountries.pop();
         if (window.SVGAngle) {
-            countries[ccV].setAttribute("stroke", "#79230b");
+            countries[ccV].setAttribute("stroke", newColor);
             countries[ccV].setAttribute("stroke-width", 4);
             countries[ccV].setAttribute("stroke-opacity", 1);
         } else {
             countries[ccV].stroked = true;
-            countries[ccV].strokeColor = "#f00";
+            countries[ccV].strokeColor = newColor;
         }
-
+      
+        countriesAndColors.push({code: ccV, color: newColor});
+        
         var option = cc.options[cc.selectedIndex];
         console.log(option);
 
@@ -204,9 +236,10 @@ function selectCountry(cc) {
     }
 }
 
+
 // aangeroepen als je op naam in geselecteerden-lijstje klikt
 function deselectCountry(cc) {
-    code = cc.toLowerCase();    
+    var code = cc.toLowerCase();    
     var countries = $('#my_jqvmap').data('mapObject').countries;
 
     if (window.SVGAngle) {
@@ -217,8 +250,11 @@ function deselectCountry(cc) {
         countries[code].stroked = false;
         countries[code].strokeColor = "#f00";
     }
-    strokedCountries[code] = false;
 
+    var countryAndColor = _.find(countriesAndColors, function(el){ return el.code === code; });    
+    outlineColorsCountries.push(countryAndColor.color);
+    countriesAndColors = _.reject(countriesAndColors, function(el) { return el.code === code; });
+    
     $(function() {
         $('#li_' + code).remove();
     });
@@ -230,14 +266,15 @@ function deselectCountry(cc) {
 // check of genoeg landen geselecteerd zijn
 function checkButton(code) {
     console.log(count);
-
+    
+    console.log("countriesAndColors:");
+    console.log(countriesAndColors);
     if (count > 0) {
         document.getElementById("submitbutton").disabled = false;
-        if (count > 15) {
-            strokedCountries[code]=false;
-            //console.log(strokedCountries);
+        
+        if (count > maxNrSelectedCountries) {          
             deselectCountry(code);
-           // strokedCountries.splice(0, 1);            
+                  
         }
     } else if (count == 0) {
         document.getElementById("submitbutton").disabled = true;
@@ -307,7 +344,7 @@ function getCountryColorValues(selectedProducts) {
                        
         }
         deferred.resolve();
-    }, 100);
+    }, 1000);
 }
 
 //... 
@@ -366,4 +403,15 @@ function colorTest() {
 function bla() {
     alert("bla");
 }
+
+
+function submitCountries() {    
+    
+    console.log(countriesAndColors);
+    document.getElementById("resultingcountries").innerHTML = "";
+    for(var i=0; i < countriesAndColors.length; i++) { // zet de landnamen weer in het html selector ding
+        document.getElementById("resultingcountries").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
+    }
+}
+
 

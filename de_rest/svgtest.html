@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+</head>
+<body>
+    <div id="viz"></div>
+   
+   
+   <script>
+        
+        var selectedBorderColor = "#a901a9";
+        var toggleColor = (function(){
+           var currentColor = "blue";
+           
+           // if (border 
+            return function(){
+            // console.log( d3.select(this).style("stroke"));
+            var border = d3.select(this).style("stroke");
+            var opacity = d3.select(this).style("fill-opacity");
+            //console.log(border);
+                currentColor = currentColor == "blue" ? "magenta" : "blue";
+                d3.select(this)
+                    .style("fill", currentColor)
+                    .style("stroke", function() { return border == selectedBorderColor ? "none" : selectedBorderColor;})
+                    .style("fill-opacity", function() { return opacity == "0.5" ? "0.3" : "0.5";});
+            }
+        })();
+
+        
+                
+        var mySVG = d3.selectAll("#viz")
+                        .append("svg");
+        
+       
+       var yC = 90;
+       var xC = 60;
+       
+        var myCircle  = mySVG.append("image")
+                         .attr("xlink:href", "http://www.e-pint.com/epint.jpg")
+                        .attr("width", 336/4)
+                        .attr("height", 386/4)
+                        .attr("x", xC)
+                        .attr("y", yC);
+        
+        var extraSpace = 4;
+        
+        console.log(myCircle.attr("y"));
+        
+        
+        mySVG.append("circle")
+                .attr("r", Math.max(myCircle.attr("width"), myCircle.attr("height"))/2 + extraSpace)
+                .attr("cx", xC + myCircle.attr("width") / 2)
+                .attr("cy", yC + myCircle.attr("height") /2)
+                .style("stroke", "none")
+                .style("fill-opacity", "0.5")
+                .style("stroke-opacity", "0.8")
+                .style("fill", "blue")
+                .on("click", toggleColor);
+    </script>
+    
+    
+</body>
+</html>
