@@ -4,7 +4,7 @@
 <html lang="en">
     <head>
         <!-- dit laad de google webfont-->
-        <link href='http://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Oxygen:400,700,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
         <meta charset="utf-8">
         <title>Trade your Life | test</title>
@@ -32,7 +32,7 @@
         
         <script type="text/javascript" src="chosen.js"></script>
 
-        <link href='http://fonts.googleapis.com/css?family=Oxygen:400,700,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        
 
                 
         <link type="text/css" rel="stylesheet" href="chosen1.css" />
@@ -60,9 +60,9 @@
 
                     <div class ="subsidetomapblock">
                         <div id="tooltipinfo"  >
-                            <p class="info">
+                            <!-- <p class="info">
                                 Country stats:
-                            </p>
+                            </p> -->
                             <p id="none">
                                 Hover over a colored country for info.                                
                             </p>
@@ -71,14 +71,12 @@
 
                     <form action="#secondtabsection" method="post">
                         <div class ="subsidetomapblock">
-                            <p class="info" >
-                                Select countries:
-                            </p>
+                            
                             
                             <div id="countries">
                                 <select id="country" class="chzn-select" name="countrySelector" size="1" >
-                                    <option selected = "selected">
-                                        
+                                    <option disabled="disabled" selected = "selected">
+                                        Select a country
                                     </option>
                                 </select>
                             </div>
@@ -151,7 +149,7 @@
                                                 hoverOpacity: 0.6,   
                                                 selectedRegion: null,
                                                 values: sessvars.ccValues,
-                                                scaleColors: ['#2c2e3f', '#dbdbd2'],
+                                                scaleColors: ['#dbdbd2', '#2c2e3f'],
                                                 normalizeFunction: 'polynomial', //linear or polynomial
                                                 
                                                 onRegionClick: function(element, code, region) {
@@ -167,6 +165,8 @@
                                                     var active = isNumber(sessvars.ccValues[code]);  // data voor land
                                                     if (active) {
                                                         $('#tooltipinfo #' + code).remove();
+                                                         $('#tooltipinfo .info').remove();
+                                                      
                                                         $('#tooltipinfo').append('<p id=none>' + "Hover over a colored country for info." + '</p>');
                                                     }
                                                  },                                         
@@ -174,9 +174,10 @@
                                                     var active = isNumber(sessvars.ccValues[code]);
                                                     if (active) {
                                                         $('#tooltipinfo #none').remove();
-                                                        $('#tooltipinfo').append('<p id='+code+'>' + sessvars.codeToName[code] + ' is/has/was... </br> Bla </p>');
+                                                        $('#tooltipinfo').append('<p class=info>In <b>' + sessvars.codeToName[code] + '</b> you need to work... </br></p><p id='+ code + '> ' + getTextData(code) + ' </p>');
                                                     }                                            
                                                     if (!active) {
+                                                        
                                                         if (window.SVGAngle) {
                                                              sessvars.countries[code].setHoverOpacity(1); // simply breaks it
                                                         }

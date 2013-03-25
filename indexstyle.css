@@ -12,6 +12,8 @@ body {
 p.info {
     font-size: 12px;
     font-style: oblique;
+    margin: 0;
+	padding: 0;
 }
 
 #header {
@@ -78,32 +80,34 @@ p.info {
 }
 
 #tooltipinfo {
-    width: 250px;
-    height: 100px;
+    width: 260px;
+    height: 150px;
     border: 1px solid black;
+    font-size: 11px;
+    text-align: right;
 }
 
 
 #sidetomap {
-    height: 418px;
+    height: 380px;
     width: 275px;
     float:left;
-    margin-top: 10px;    
+    margin-top: 5px;    
     border: 1px solid black;
     -webkit-box-flex: 1;
 }
 
 .subsidetomapblock {
-    width: 250px;
+    width: 260px;
     float: left;
-    margin: 5px;    
+    margin: 7px;    
     border: 1px solid black;
 }
 
 #location-selected {
     height: 190px;
     float:left;
-    margin: 0px;
+    margin: 0;
     margin-left: 10px;    
     padding-left: 10px;
     text-align:left;
@@ -123,6 +127,7 @@ p.info {
 	color: #e7e3d0;
     text-align:left;
     position:relative;
+    margin: 0;
    /* position:absolute;
      top: 250px; 
      left: 300px;*/

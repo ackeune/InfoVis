@@ -6,6 +6,18 @@ var mapLoaded = false;
 var databaseFilename = "merged_db_20130315.csv";
 window.productNames = ["cappuccino", "bread", "jeans", "movie", "internet", "sneakers", "prepaid", "mcdonalds"];
 window.selectedProductNames = ["cappuccino", "bread", "jeans", "movie"];
+
+
+var productNamesToText = new Array();
+productNamesToText["cappuccino"] = "a cappuccino in a restaurant";
+productNamesToText["bread"] = "a loaf of fresh white bread";
+productNamesToText["jeans"] = "a pair of jeans (Levis 501 or similar)";
+productNamesToText["movie"] = "a cinema ticket";
+productNamesToText["internet"] = "a month of internet (cable/ADSL)",
+productNamesToText["sneakers"] = "a pair of Nike sneakers";
+productNamesToText["prepaid"] = "1 min. of mobile prepaid",
+productNamesToText["mcdonalds"] = "a combo meal at McDonalds";
+
 var countryColors = {};
 
 var count; // hoeveel landen selected
@@ -292,7 +304,7 @@ function getCountryColorValues(selectedProducts) {
     
     setTimeout(function() {
 
-        if (true)/*(!sessvars.ccValues || sessvars.ccValues.length == 0) */{
+        if (!sessvars.ccValues || sessvars.ccValues.length == 0) {
             var colors = {};
             var absentColor = "#808080";
 
@@ -514,4 +526,30 @@ function submitCountries() {
     
     
  }  
+ 
+ 
+ function getTextData(countryCode) {
+    countryCode = countryCode.toUpperCase();
+    countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
+    countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(selectedProductNames, prod.name); });
+    console.log(countryMatrixProductData);
+    var text = "";
+    for(var i=0; i < countryMatrixProductData.length; i++) {
+        if (countryMatrixProductData[i].minutes <= 60) {
+            text += countryMatrixProductData[i].minutes.toFixed(0) + " minutes for a " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+        }
+        else {
+            var number = (countryMatrixProductData[i].minutes/60).toFixed(0) ;
+            text += number;
+            if (number == 1) {
+                text+=  " hour ";
+            }
+            else {
+                text += " hours ";
+            }
+            text += "for a " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+        }
+    }
+    return text;
+ }
 
