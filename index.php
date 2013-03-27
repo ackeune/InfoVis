@@ -23,7 +23,7 @@
         <!-- sugar.js breekt met jqueryvmap dus underscore -->
         <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
         
-        <script type="text/javascript" src="radar_chart/radar.js"></script>
+        <script type="text/javascript" src="radarchart.js"></script>
         <!-- mijn code -->
         <script type="text/javascript" src="mycode.js"></script>
         
@@ -40,7 +40,7 @@
         <link type="text/css" rel="stylesheet" href="jqvmap/jqvmap.css" />
         <link href="indexstyle.css" rel="stylesheet" type="text/css" />
         
-         <link type="text/css" rel="stylesheet" href="radar_chart/style.css" />
+         <link type="text/css" rel="stylesheet" href="radarstyle.css" />
         
         
     </head>
@@ -300,7 +300,12 @@
                 You selected from the map: 
             </p>
             <div id="resultingcountries"></div>
-            
+            <div id="viz">
+            <div id="spiderchart">
+            </div>
+
+
+
         </div> <!-- id = secondttab -->
     <a name="secondtabsection"></a>  
     </div> <!-- id = wrapper -->

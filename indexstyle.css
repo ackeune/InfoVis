@@ -235,3 +235,8 @@ ul#location-selected li {
     fill: none;
     stroke: none;               
 }
+
+#spiderchart {
+
+    color: white;
+}
