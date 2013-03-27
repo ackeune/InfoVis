@@ -161,14 +161,14 @@ addAxes = function () {
 	  .style("stroke", ruleColor)
 	  .style("fill", "none");
 	
-	/*
+	
 	circleAxes.append("svg:text")
 		.attr("text-anchor", "middle")
 		.attr("dy", function (d) {
 			return -1 * radius(d);
 		})
-		.text(String);
-	*/	
+		.text("test");
+	
 		  
 	
 	lineAxes = vizBody.selectAll('.line-ticks')

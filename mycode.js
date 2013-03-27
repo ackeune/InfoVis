@@ -516,6 +516,7 @@ function submitCountries() {
     for(var i=0; i < countriesAndColors.length; i++) { 
         document.getElementById("resultingcountries").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
     }
+	document.getElementById("spiderchart").innerHTML = "";
     makeSpiderChart(countriesAndColors);
 }
 
