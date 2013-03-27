@@ -5,15 +5,24 @@ body {
 	font-size: 11px;
 	color: #c8c7c1;
 	/*background-color: #404041;*/
-	background-image: url(images/background.png);
+	background-image: url(images/background/black-Linen.png);
 	background-repeat: repeat;
 }
 
-p.info {
+p.info{
     font-size: 12px;
     font-style: oblique;
     margin: 0;
 	padding: 0;
+}
+
+h1 {
+	color: #ffffff;
+}
+
+img {
+	float: left;
+	margin-left: 16px;
 }
 
 #header {
@@ -28,7 +37,26 @@ p.info {
 	margin-right: auto;
 	margin-bottom: 0px;
 	margin-left: auto;
-    background-color: #808080;
+}
+
+#belt {
+	background-image: url(images/splash/splash-screen-belt.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+    text-align: center;
+    width: 990px;
+	padding-top: 15px;
+	padding-right: 16px;
+	padding-bottom: 16px;
+	padding-left: 16px;
+	margin-top: 11px;
+	margin-right: auto;
+	margin-bottom: 0px;
+	margin-left: auto;
+}
+
+a {
+	color: #C8C7C1;
 }
 
 #wrapper {
