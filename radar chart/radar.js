@@ -1,4 +1,4 @@
-var series, 
+var dataCountries, 
     labels,
     minVal,
     maxVal,
@@ -13,11 +13,20 @@ var series,
     radius,
     radiusLength,
 	countryColours = ['#ed1c24', '#f15a29', '#fff100', '#94e01b', '#4dd5ff', '#1e29f7', '#0e0e51', '#763cd3', '#631f4c', '#ec008b'],
-    ruleColor = "#CCC";
+    ruleColor = "#CCC",
+	numberAxes = 8;
 	
 
 var loadViz = function(){
   loadData();
+  buildBase();
+  setScales();
+  addAxes();
+  draw();
+};
+
+var makeSpiderChart = function(countriesAndColors ){
+  getDataCountries(countriesAndColors );
   buildBase();
   setScales();
   addAxes();
@@ -30,7 +39,7 @@ var loadData = function(){
     };
 
     //TODO use country data
-    series = [
+    dataCountries = [
       [],
       [],
       [],
@@ -38,17 +47,17 @@ var loadData = function(){
     ];
 
     labels = [];
-    labels = ["coffee","jeans","bread","prepaid","cinema"];
-    for (i = 0; i < 5; i += 1) {
-        series[0][i] = randomFromTo(0,20);
-        series[1][i] = randomFromTo(5,15);
-        series[2][i] = randomFromTo(5,25);
-		series[3][i] = randomFromTo(10,25);
+    labels = ["cappuchino","jeans","bread","internet","sneakers", "movie","prepaid","mcdonalds"];
+    for (i = 0; i < 8; i += 1) {
+        dataCountries[0][i] = randomFromTo(0,20);
+        dataCountries[1][i] = randomFromTo(5,15);
+        dataCountries[2][i] = randomFromTo(5,25);
+		dataCountries[3][i] = randomFromTo(10,25);
         //labels[i] = i; //in case we want to do different formatting
     }
 
 	//TODO do this better
-    mergedArr = series[0].concat(series[1]).concat(series[2]);
+    mergedArr = dataCountries[0].concat(dataCountries[1]).concat(dataCountries[2]);
 
     minVal = d3.min(mergedArr);
     maxVal = d3.max(mergedArr);
@@ -58,9 +67,11 @@ var loadData = function(){
     minVal = 0;
 
     //to complete the radial lines
-    for (i = 0; i < series.length; i += 1) {
-        series[i].push(series[i][0]);
+    for (i = 0; i < dataCountries.length; i += 1) {
+        dataCountries[i].push(dataCountries[i][0]);
     }
+	console.log("old");
+	console.log(dataCountries);
 };
 
 var findMinMax = function(array){
@@ -77,8 +88,42 @@ var findMinMax = function(array){
 	}
 }
 
+function getDataCountries(countriesAndColors) {
+	labels = ["cappuchino","jeans","bread","internet","sneakers", "movie","prepaid","mcdonalds"]; //TODO put somewhere else
+    console.log("IN RADAR");
+
+	dataCountries = new Array();
+	for(var i=0; i < countriesAndColors.length; i++) { 
+		dataCountries[i] = new Array();
+		countryCode = countriesAndColors[i].code;
+		countryCode = countryCode.toUpperCase();
+		countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
+		
+		countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(productNames, prod.name); });
+		console.log(countryMatrixProductData);
+		for(var j=0; j < labels.length; j++){
+			a = countryMatrixProductData[j].minutes;
+			dataCountries[i][j] = a;
+		}	
+	}
+	
+	 //to complete the radial lines
+    for (i = 0; i < dataCountries.length; i += 1) {
+        dataCountries[i].push(dataCountries[i][0]);
+    }
+	console.log("new");
+	console.log(dataCountries);
+	//console.log(dataCountries);
+	minVal = 0;
+	maxVal = 1000;
+	//document.getElementById("spiderchart").innerHTML = "";
+    //for(var i=0; i < countriesAndColors.length; i++) { // zet de landnamen weer in het html selector ding
+    //   document.getElementById("spiderchart").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
+    //}
+ }
+
 var buildBase = function(){
-    var viz = d3.select("#viz")
+    var viz = d3.select("#spiderchart")
         .append('svg:svg')
         .attr('width', w)
         .attr('height', h)
@@ -177,17 +222,17 @@ var draw = function () {
   var groups,
       lines,
       linesToUpdate;
-
+	console.log("data in draw");
+	console.log(dataCountries);
   highlightedDotSize = 4;
-
-  groups = vizBody.selectAll('.series')
-      .data(series);
+  groups = vizBody.selectAll('.dataCountries')
+      .data(dataCountries);
   groups.enter().append("svg:g")
       .attr("class", function (d, i){
 		return 'country' + i;
 	  })
 	  /*
-	  .attr('class', 'series')
+	  .attr('class', 'dataCountries')
 	  
       .style('stroke', function (d, i) { //TODO make dynamic
 		return countryColours[i]
@@ -208,10 +253,10 @@ var draw = function () {
               return 0;
           })
           .angle(function (d, i) {
-              if (i === 5) { //TODO numberAxes var
+              if (i === numberAxes) { //TODO numberAxes var
                   i = 0;
               } //close the line
-              return (i / 5) * 2 * Math.PI; //TODO numberAxes var
+              return (i / numberAxes) * 2 * Math.PI; //TODO numberAxes var
           }))
       .style("stroke-width", 3);
 
@@ -236,9 +281,9 @@ var draw = function () {
           return radius(d);
       })
       .angle(function (d, i) {
-          if (i === 5) { //TODO numberAxes var
+          if (i === numberAxes) { //TODO numberAxes var
               i = 0;
           } //close the line
-          return (i / 5) * 2 * Math.PI; //TODO numberAxes var
+          return (i / numberAxes) * 2 * Math.PI; //TODO numberAxes var
       }));
 };

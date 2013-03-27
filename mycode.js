@@ -504,6 +504,7 @@ function submitCountries() {
     for(var i=0; i < countriesAndColors.length; i++) { // zet de landnamen weer in het html selector ding
         document.getElementById("resultingcountries").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
     }
+	makeSpiderChart(countriesAndColors);
 }
 
  function addProductData (img)

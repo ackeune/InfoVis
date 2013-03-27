@@ -32,8 +32,8 @@
         
         <script type="text/javascript" src="chosen.js"></script>
 
-        
-
+        <script type="text/javascript" src="radar chart/radar.js"></script>
+		<link type="text/css" rel="stylesheet" href="radar chart/style.css" />
                 
         <link type="text/css" rel="stylesheet" href="chosen1.css" />
         <link type="text/css" rel="stylesheet" href="jqvmap/jqvmap.css" />
@@ -266,6 +266,10 @@
                 You selected from the map: 
             </p>
             <div id="resultingcountries"></div>
+			<p> 
+                Spider chart: 
+            </p>
+			<div id="spiderchart"></div>
            
         </div> <!-- id = secondttab -->
     <a name="secondtabsection"></a>  
