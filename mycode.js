@@ -19,6 +19,10 @@ productNamesToText["prepaid"] = "1 min. of mobile prepaid",
 productNamesToText["mcdonalds"] = "a combo meal at McDonalds";
 
 var countryColors = {};
+var absentColor = "#257d85";
+
+var maxMinutes;
+var minMinutes;
 
 var count; // hoeveel landen selected
 if (!count) {
@@ -171,7 +175,7 @@ function putStroke(code, region) {
     // alert('**' + code);
     var countries = sessvars.countries;
 
-    var active = isNumber(sessvars.ccValues[code]);
+    var active = sessvars.ccValues[code] != absentColor;
     if (active) {
         var newColor = outlineColorsCountries.pop();
         
@@ -303,23 +307,25 @@ function getCountryColorValues(selectedProducts) {
     var deferred = $.Deferred();
     
     setTimeout(function() {
-
         if (!sessvars.ccValues || sessvars.ccValues.length == 0) {
+        
+            
+            var minutes = {};
             var colors = {};
-            var absentColor = "#808080";
+            var absentMinutes = -1;
+            
 
             var maxMinutesC;
-            var maxMinutes = 0;
+            maxMinutes = 0;
             var minMinutesC;
-            var minMinutes = 999999999;
+            minMinutes = 999999999;
             
             //console.log("selectedProducts:");
             //console.log(selectedProducts);
             
             sessvars.workData2.forEach(function(d) {
-                
+            
                 var totalMinutes;
-                var color;
 
                 if (isNumber(d["wage per minute"])) {
                     var productsWithCost = _.filter(d["products"], function(product) {
@@ -341,7 +347,7 @@ function getCountryColorValues(selectedProducts) {
                         }, 0);
                         
                        // console.log("totalMinutes: " + totalMinutes);
-                        colors[ d["cc"].toLowerCase()] = totalMinutes;
+                        minutes[ d["cc"].toLowerCase()] = totalMinutes;
 
                         if (totalMinutes > maxMinutes) {
                             maxMinutes = totalMinutes;
@@ -350,20 +356,33 @@ function getCountryColorValues(selectedProducts) {
                             minMinutes = totalMinutes;
                         }
                     } else {
-                        //  colors[ d["cc"].toLowerCase()] = absentColor;
+                        minutes[ d["cc"].toLowerCase()] = absentMinutes;
                     }
                 } else {
-                    //colors[ d["cc"].toLowerCase() ] = absentColor;
+                    minutes[ d["cc"].toLowerCase() ] = absentMinutes;
                 }
             });
 
+            console.log("minutes:");
             console.log(maxMinutes);
             console.log(minMinutes);
+            
+            colorFun.domain([minMinutes, maxMinutes]);
+            
+            sessvars.workData2.forEach(function(d) {
+                
+                colors[ d["cc"].toLowerCase()] = colorFun(minutes[ d["cc"].toLowerCase()]);
+                if (minutes[ d["cc"].toLowerCase()] == absentMinutes) {
+                    colors[ d["cc"].toLowerCase()] = absentColor;
+                }
+                else {
+                    colors[ d["cc"].toLowerCase()] = colorFun(minutes[ d["cc"].toLowerCase()]);
+                }
+            });
             sessvars.ccValues = colors;
+            sessvars.cmValues = minutes;
             console.log("sessvars.ccValues in getcolors:");
             console.log(sessvars.ccValues );
-            
-            //$('#my_jqvmap').vectorMap('set', 'values', sessvars.ccValues);
             
                        
         }
@@ -371,17 +390,22 @@ function getCountryColorValues(selectedProducts) {
     }, 1000);
 }
 
+
+
+
+    
 function getCountryColorValues_noTimeOut(selectedProducts) {
     
 
     if (true)/*(!sessvars.ccValues || sessvars.ccValues.length == 0) */{
+        var minutes = {};
         var colors = {};
-        var absentColor = "#808080";
+        var absentMinutes = -1;
 
         var maxMinutesC;
-        var maxMinutes = 0;
+        maxMinutes = 0;
         var minMinutesC;
-        var minMinutes = 999999999;
+        minMinutes = 999999999;
         
         //console.log("selectedProducts:");
         //console.log(selectedProducts);
@@ -389,46 +413,68 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
         sessvars.workData2.forEach(function(d) {
             
             var totalMinutes;
-            var color;
+            
+            
+            if(selectedProducts.length > 0) {
+            
+                if (isNumber(d["wage per minute"])) {
+                    var productsWithCost = _.filter(d["products"], function(product) {
+                        return _.contains(selectedProducts, product.name) && isNumber(product["cost"]);
+                    });
+                    var hasAll = productsWithCost.length == selectedProducts.length;
 
-            if (isNumber(d["wage per minute"])) {
-                var productsWithCost = _.filter(d["products"], function(product) {
-                    return _.contains(selectedProducts, product.name) && isNumber(product["cost"]);
-                });
-                var hasAll = productsWithCost.length == selectedProducts.length;
+                    if (hasAll) {
+                        //console.log("hasAll");
+                        totalMinutes = _.reduce(d["products"], function(memo, prod) {
+                            if (_.contains(selectedProducts, prod.name)) {
+                                //console.log("selectedProducts contains " + prod.name + " it has " + prod.minutes + " minutes");
+                                return memo + prod.minutes;
+                            }
+                            else {
+                                //console.log("selectedProducts not contains " + prod.name );
+                                return memo;
+                            }
+                        }, 0);
+                        
+                       // console.log("totalMinutes: " + totalMinutes);
+                        minutes[ d["cc"].toLowerCase()] = totalMinutes;
 
-                if (hasAll) {
-                    //console.log("hasAll");
-                    totalMinutes = _.reduce(d["products"], function(memo, prod) {
-                        if (_.contains(selectedProducts, prod.name)) {
-                            //console.log("selectedProducts contains " + prod.name + " it has " + prod.minutes + " minutes");
-                            return memo + prod.minutes;
+                        if (totalMinutes > maxMinutes) {
+                            maxMinutes = totalMinutes;
                         }
-                        else {
-                            //console.log("selectedProducts not contains " + prod.name );
-                            return memo;
+                        else if (totalMinutes < minMinutes) {
+                            minMinutes = totalMinutes;
                         }
-                    }, 0);
-                    
-                   // console.log("totalMinutes: " + totalMinutes);
-                    colors[ d["cc"].toLowerCase()] = totalMinutes;
-
-                    if (totalMinutes > maxMinutes) {
-                        maxMinutes = totalMinutes;
+                    } else {
+                        minutes[ d["cc"].toLowerCase()] = absentMinutes;
                     }
-                    else if (totalMinutes < minMinutes) {
-                        minMinutes = totalMinutes;
-                    }
-                } else {
-                    //  colors[ d["cc"].toLowerCase()] = absentColor;
                 }
-            } else {
-                //colors[ d["cc"].toLowerCase() ] = absentColor;
+                else {
+                    minutes[ d["cc"].toLowerCase() ] = absentMinutes;
+                }
+            }
+            else {
+                minutes[ d["cc"].toLowerCase() ] = absentMinutes;
             }
         });
+        
 
         console.log(maxMinutes);
         console.log(minMinutes);
+        
+        colorFun.domain([minMinutes, maxMinutes]);
+        
+        sessvars.workData2.forEach(function(d) {
+            
+            colors[ d["cc"].toLowerCase()] = colorFun(minutes[ d["cc"].toLowerCase()]);
+            if (minutes[ d["cc"].toLowerCase()] == absentMinutes) {
+                colors[ d["cc"].toLowerCase()] = absentColor;
+            }
+            else {
+                colors[ d["cc"].toLowerCase()] = colorFun(minutes[ d["cc"].toLowerCase()]);
+            }
+        });
+        sessvars.cmValues = minutes;
         sessvars.ccValues = colors;
         console.log("sessvars.ccValues in getcolors:");
         console.log(sessvars.ccValues );
@@ -439,43 +485,9 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
     }
 }
 
-//... 
-function getColorsSampleData() {
-    var max = 0, min = Number.MAX_VALUE, cc, startColor = [200, 238, 255], endColor = [0, 100, 145], colors = {}, hex;
-
-    //console.log("gdpData:");
-    //console.log(gdpData);
-
-    //find maximum and minimum values
-    for (cc in gdpData) {//console.log(cc);
-
-        if (parseFloat(gdpData[cc]) > max) {
-            max = parseFloat(gdpData[cc]);
-        }
-        if (parseFloat(gdpData[cc]) < min) {
-            min = parseFloat(gdpData[cc]);
-        }
-    }
-
-    //set colors according to values of GDP
-    for (cc in gdpData) {
-        if (gdpData[cc] > 0) {
-            colors[cc] = '#';
-            for (var i = 0; i < 3; i++) {
-                hex = Math.round(startColor[i] + (endColor[i] - startColor[i]) * (gdpData[cc] / (max - min))).toString(16);
-
-                if (hex.length == 1) {
-                    hex = '0' + hex;
-                }
-
-                colors[cc] += (hex.length == 1 ? '0' : '') + hex;
-            }
-        }
-    }
-    //console.log("colors in getColorsSampleData(): ");
-    //console.log(colors);
-    return colors;
-}
+var colorFun = d3.scale.log().base(4.1).nice()
+    .range(["#f3f3f3", "#1e1e1e"]);
+    
 
 function colorTest() {
     // alert("colortest");
@@ -501,10 +513,10 @@ function submitCountries() {
     
     console.log(countriesAndColors);
     document.getElementById("resultingcountries").innerHTML = "";
-    for(var i=0; i < countriesAndColors.length; i++) { // zet de landnamen weer in het html selector ding
+    for(var i=0; i < countriesAndColors.length; i++) { 
         document.getElementById("resultingcountries").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
     }
-	makeSpiderChart(countriesAndColors);
+    makeSpiderChart(countriesAndColors);
 }
 
  function addProductData (img)
@@ -523,21 +535,53 @@ function submitCountries() {
     getCountryColorValues_noTimeOut(selectedProductNames);
     
     
-    $('#my_jqvmap').vectorMap('set', 'values', sessvars.ccValues);
+    $('#my_jqvmap').vectorMap('set', 'colors', sessvars.ccValues);
     
+    for(var index in sessvars.codeToName) {
+        $('select option[value=\"'+ index + '\"]').remove(); 
+    }
+    for(var index in sessvars.codeToName) {
+        var active = sessvars.ccValues[index] != absentColor;
+        if (active) {
+            $('select').append("<option value=\""+index+"\">"+sessvars.codeToName[index]+"</option>");
+        }
+        else {
+            $('select').append('<option value=\"'+index+'\" disabled>'+sessvars.codeToName[index]+'</option>');
+            //console.log(index);
+            
+            if (_.some(countriesAndColors, function(el) {return el.code === index;})) {
+                console.log(index);
+                removeStroke(index);
+            }
+        }
+    }
+    $('select').trigger('liszt:updated');
+ 
+
+   
+   //$('.chzn-select').val(2);
+   
+    //$('#country_chzn').remove();
+   // $(".chzn-select").chosen();
+    //$("#country").chosen().change( function() {alert("this is an alert"); });
+
+    
+    
+    barChart() ;
     
  }  
  
+
  
  function getTextData(countryCode) {
     countryCode = countryCode.toUpperCase();
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
     countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(selectedProductNames, prod.name); });
-    console.log(countryMatrixProductData);
+    //console.log(countryMatrixProductData);
     var text = "";
     for(var i=0; i < countryMatrixProductData.length; i++) {
         if (countryMatrixProductData[i].minutes <= 60) {
-            text += countryMatrixProductData[i].minutes.toFixed(0) + " minutes for a " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+            text += countryMatrixProductData[i].minutes.toFixed(0) + " minutes for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
         }
         else {
             var number = (countryMatrixProductData[i].minutes/60).toFixed(0) ;
@@ -553,4 +597,243 @@ function submitCountries() {
     }
     return text;
  }
+ 
+ function calcBarChartData() {
+    
+    var interval = maxMinutes - minMinutes;
+    var nrBars = 4;
+    
+   // var newScale = colorFun.copy();
+   // newScale.range([0,1]);
+    
+    var newScale2 = colorFun.copy();
+    newScale2.range([minMinutes,maxMinutes]);
+    
+    var barInterval = interval / nrBars;
+    //var nrCountriesPerBar = new Array(nrBars);
+    var nrCountriesPerBarRescaled = new Array(nrBars);
+    var intervalNrPerBar = new Array(nrBars);
+    var intervalNrPerBarReturned = new Array(nrBars);
+    //var intervalNrPerBar2 = new Array(nrBars);
+    
+    var intervalNumbers = new Array(nrBars);
+    
+    for (var i=0; i < nrBars; i++) {
+        intervalNrPerBar[i] = barInterval * (i);
+        //intervalNrPerBar2[i] = 0.25 * (i);
+       intervalNrPerBarReturned[i] = barInterval * (i+1);
+       // nrCountriesPerBar[i] = 0;
+        nrCountriesPerBarRescaled[i] = 0;
+        
+    }
+   // console.log(interval);
+    console.log(intervalNrPerBar);
+   // console.log(intervalNrPerBar2);
+     
+    
+    sessvars.workData2.forEach(function(d) {
+        var cc = d["cc"].toLowerCase();
+        var active = sessvars.ccValues[cc] != absentColor;
+        if (active) {
+           // console.log(sessvars.cmValues[cc]);
+           // console.log(newScale(sessvars.cmValues[cc]));
+            for (var i = nrBars-1; i >= 0; i--) {
+               
+                //if (newScale(sessvars.cmValues[cc]) > intervalNrPerBar2[i]) {
+                //    nrCountriesPerBar[i]++;
+                //}
+                if (newScale2(sessvars.cmValues[cc]) > intervalNrPerBar[i]) {
+                    nrCountriesPerBarRescaled[i]++;
+                }
+            }
+        }
+    });
+    //console.log("nrCountriesPerBar:");
+   // console.log(nrCountriesPerBar);
+    console.log("nrCountriesPerBarR:");
+    console.log(nrCountriesPerBarRescaled);
+    
+    return [nrCountriesPerBarRescaled, intervalNrPerBarReturned]
+ 
+ }
+ 
+ function rescaleMinutes (minutes) {
+ 
+    if (minutes >= 60) {
+        var hours = minutes / 60;
+        if (hours >= 8) {
+            var days = hours / 8;
+            if (days >= 220) {
+                var years = days / 220;
+                return ["years", years];
+            }
+            return ["days", days];
+        }
+        return ["hours", hours];
+    }
+    return ["minutes", minutes];
+        
+ 
+ 
+ }
+ 
+function setGradient(gradients, chart, id, startY,endY,startColor,endColor) {
+    gradients[id] = chart
+        .append("linearGradient");
+        
+    gradients[id].attr("y1", startY)
+        .attr("y2", endY)
+        .attr("x1", "0")
+        .attr("x2", "0")
+        .attr("id", "gradient"+id)
+        .attr("gradientUnits", "userSpaceOnUse");
+    
+    gradients[id]
+        .append("stop")
+        .attr("offset", "0")
+        .attr("stop-color", startColor);
+        
+    gradients[id]
+        .append("stop")
+        .attr("offset", "1")
+        .attr("stop-color", endColor);
+    
+    
+}
+
+function formatNoDecimals(nr) {
+
+    noDecimals = d3.format(".2s");
+    if (!isNumber(nr) || nr < 0) {
+        return 0;
+    }
+    else {
+        return noDecimals(nr);
+    }
+    
+}
+ function barChart() {
+ 
+    chartDataArray = calcBarChartData();
+    nrCountriesPerBarRescaled = chartDataArray[0];
+    intervalNrPerBar = chartDataArray[1];
+    
+    console.log(d3.max(nrCountriesPerBarRescaled));
+    
+    
+    
+    // var data = d3.range(10).map(Math.random);
+    // var data = [23, 85, 67, 38, 70, 30, 80, 18 ];
+    // var colorlist = ["maroon", "darkblue"];
+    // var labellist = ["0-10", "", "10-20", "", "30-40", "", "50-60", ""];
+  
+    $('#bars').remove();
+    
+    var w = 240,
+        h = 110;
+    var topmargin = 10;
+    var leftmargin = 80;
+    var barHeight = 15;
+    
+    
+    var xFun = d3.scale.linear()
+        .domain([0, d3.max(nrCountriesPerBarRescaled)])
+        .range([leftmargin, w]);
+        
+    var yFun = d3.scale.ordinal()
+        .domain(d3.range(intervalNrPerBar.length))
+        .rangeBands([topmargin, h+topmargin], .2);
+
+    var chart = d3.select("#rectangles")
+        .append("svg")
+        .attr("id", "bars")
+         .attr("width", w )
+         .attr("height", h + 30);
+           // .append("svg:g")
+           // .attr("transform", "translate(20,0)");
+
+           
+    var xAxis = d3.svg.axis()
+            .scale(xFun)
+            .ticks(5)
+            .orient("bottom");
+   
+    
+    
+    var startY=30;
+    var endY=40;
+    var startColor="#ffffff";
+    var endColor="#000000";
+    
+    var gradients = Array(4);
+    //setGradient( gradients, chart,1,startY,endY,startColor,endColor);
+    //var gradient1 = gradients[1];
+    //console.log(gradient1);
+    
+
+    
+    var rects = chart.selectAll("rect").
+        data(nrCountriesPerBarRescaled).
+        enter().
+        append("rect")
+        .attr("x", function(datum, index) { return leftmargin; })
+         .attr("y", function(datum, index) { console.log("index: " +  (index)); return yFun(index); })
+        .attr("fill", function(d, i) { return "#ac26d9"; } )    
+         .transition().duration(600)
+        .attr("width", function(datum, index) {  if(formatNoDecimals(datum) == 0) return 0; else return xFun(datum); })
+        .attr("height", function(datum, index) { return barHeight; })
+        //.style("stroke","#2b929b")
+         .attr("fill", function(datum, index) { 
+                                            if (index == 0) {
+                                                startColor = colorFun(0);
+                                            }
+                                            else {
+                                                startColor = colorFun(intervalNrPerBar[index-1]);
+                                            }
+                                            endColor = colorFun(intervalNrPerBar[index]);
+                                            setGradient( gradients, chart,index,yFun(index),yFun(index)+barHeight,startColor,endColor);
+                                            return "url(#gradient"+index+")"; });
+    
+                    
+     chart.selectAll("text").
+                data(intervalNrPerBar).
+                enter().
+                append("text").
+                attr("x", function(datum, index) { return 0 ; } ).
+                attr("y", function(datum, index) { return yFun(index); } ).
+                attr("dx", "1.2em").
+                attr("dy", 9).
+                attr("text-achor","start"). 
+                text( function(datum) { var arr = rescaleMinutes(datum); return "Up to " + formatNoDecimals(arr[1]) + " " + arr[0]; } )
+                    .attr("class", "yaxistext");
+     
+     
+   //   xAxis.tickFormat(function (d) { return ''; })
+      
+     chart.append("g")
+      .attr("class", "xaxis")
+      .attr("transform", "translate(0," + (h+20) + ")")
+      .call(xAxis)        
+          .selectAll("text")  
+                .style("text-anchor", "middle")
+                //.attr("dx", "3em")
+                .attr("dy", -13) ; // why...??
+                //.attr("transform", function(d) {
+                //        return "translate(0,7),rotate(-80)";
+                //    });
+            
+   
+   
+     chart.append("text").              
+              attr("x", leftmargin-10).
+              attr("y", h+20).
+              attr("dy", -5) .
+              attr("class","xaxis").
+             // attr("dx", -barWidth/2).
+              attr("text-anchor", "end").
+              //attr("style", "font-size: 9; font-family: 'Oxygen', sans-serif").
+              text("Nr. of countries");
+            //  attr("fill","white");     
+
+}
 

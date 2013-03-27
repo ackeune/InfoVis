@@ -23,6 +23,7 @@
         <!-- sugar.js breekt met jqueryvmap dus underscore -->
         <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
         
+        <script type="text/javascript" src="radar_chart/radar.js"></script>
         <!-- mijn code -->
         <script type="text/javascript" src="mycode.js"></script>
         
@@ -32,12 +33,14 @@
         
         <script type="text/javascript" src="chosen.js"></script>
 
-        <script type="text/javascript" src="radar chart/radar.js"></script>
-		<link type="text/css" rel="stylesheet" href="radar chart/style.css" />
+        
+
                 
         <link type="text/css" rel="stylesheet" href="chosen1.css" />
         <link type="text/css" rel="stylesheet" href="jqvmap/jqvmap.css" />
         <link href="indexstyle.css" rel="stylesheet" type="text/css" />
+        
+         <link type="text/css" rel="stylesheet" href="radar_chart/style.css" />
         
         
     </head>
@@ -59,13 +62,17 @@
                 <div id="sidetomap">
 
                     <div class ="subsidetomapblock">
-                        <div id="tooltipinfo"  >
+                        <div id="tooltipinfo"  >                        
                             <!-- <p class="info">
                                 Country stats:
                             </p> -->
                             <p id="none">
                                 Hover over a colored country for info.                                
                             </p>
+                            
+                        </div>
+                        <div id="rectangles">
+                        <p class="info"> Workload distribution</p>
                         </div>
                     </div>
 
@@ -141,20 +148,21 @@
                                         setTimeout(function() {
                                          $map.vectorMap( { // maak worldmap
                                                 map: 'world_en',
-                                                selectedColor: '#666666',
+                                                //selectedColor: '#666666',
                                                 backgroundColor: null,
                                                 enableZoom: true,
                                                 showTooltip: true,                                           
                                                 hoverColor: '#f1dfa9',    
                                                 hoverOpacity: 0.6,   
                                                 selectedRegion: null,
-                                                values: sessvars.ccValues,
-                                                scaleColors: ['#dbdbd2', '#2c2e3f'],
-                                                normalizeFunction: 'polynomial', //linear or polynomial
+                                                colors: sessvars.ccValues,
+                                                //scaleColors: ['#dbdbd2', '#2c2e3f'],
+                                                //normalizeFunction: 'polynomial', //linear or polynomial
                                                 
                                                 onRegionClick: function(element, code, region) {
                                                     
                                                     if (!(_.some(countriesAndColors, function(el) {return el.code === code;}))) {
+                                                        console.log("putstroke")
                                                         putStroke(code, region);
                                                     }
                                                     else {
@@ -162,24 +170,28 @@
                                                     }
                                                 },                                        
                                                  onRegionOut: function(event, code, region){
-                                                    var active = isNumber(sessvars.ccValues[code]);  // data voor land
+                                                    var active = sessvars.ccValues[code] != absentColor;  // data voor land
                                                     if (active) {
                                                         $('#tooltipinfo #' + code).remove();
                                                          $('#tooltipinfo .info').remove();
                                                       
                                                         $('#tooltipinfo').append('<p id=none>' + "Hover over a colored country for info." + '</p>');
+                                                        $('#tooltipinfo').css("display", "none");
+                                                        $('#rectangles').css("display", "inline");
                                                     }
                                                  },                                         
                                                  onRegionOver: function(element, code, region) {
-                                                    var active = isNumber(sessvars.ccValues[code]);
+                                                    var active = sessvars.ccValues[code] != absentColor;
                                                     if (active) {
+                                                        $('#rectangles').css("display", "none");
+                                                        $('#tooltipinfo').css("display", "inline");
                                                         $('#tooltipinfo #none').remove();
                                                         $('#tooltipinfo').append('<p class=info>In <b>' + sessvars.codeToName[code] + '</b> you need to work... </br></p><p id='+ code + '> ' + getTextData(code) + ' </p>');
                                                     }                                            
                                                     if (!active) {
                                                         
                                                         if (window.SVGAngle) {
-                                                             sessvars.countries[code].setHoverOpacity(1); // simply breaks it
+                                                             //sessvars.countries[code].setHoverOpacity(1); // simply breaks it
                                                         }
                                                     }
                                                    
@@ -194,18 +206,33 @@
                                     
                                 $.when(promiseMap).then(function() {
                                                                   
+                                   
+                                     function makeChosen() {
+                                        var deferred = $.Deferred();
+
+                                        setTimeout(function() {
+                                            for(var index in sessvars.codeToName) {
+                                                var active = sessvars.ccValues[index] != absentColor;
+                                                if (active) {
+                                                    $('#country').append("<option value=\""+index+"\">"+sessvars.codeToName[index]+"</option>");
+                                                }
+                                                else {
+                                                    $('#country').append('<option value=\"'+index+'\" disabled>'+sessvars.codeToName[index]+'</option>');
+                                                }
+                                            }
+                                            $("select").chosen();
+                                           deferred.resolve();
+                                        }, 10);
+                                        
+                                        return deferred.promise();
+                                    }
+                                                                        
+                                    var promiseChosen = $.when(makeChosen());
                                     
-                                    for(var index in sessvars.codeToName) {
-                                        var active = isNumber(sessvars.ccValues[index]);
-                                        if (active) {
-                                            $('#country').append("<option value=\""+index+"\">"+sessvars.codeToName[index]+"</option>");
-                                        }
-                                        else {
-                                        $('#country').append('<option value=\"'+index+'\" disabled>'+sessvars.codeToName[index]+'</option>');
-                                        }
-                                         
-                                }
-                                $(".chzn-select").chosen();
+                                     
+                                    $.when(promiseChosen).then(function() {
+                                    
+                                    
                                 // <?php // zet de grafische selectie van de vorige pagina (de selecties) opnieuw in de huidige pagina (first tab)
                                 // if(isset($_POST['countries'] ) ) {      
                                     // if (is_array($_POST['countries'])) {
@@ -224,29 +251,36 @@
                                  // }
                                 // ?>
                                 
-                                
-                                //console.log(ccs);       
-                                //console.log("workData2:");
-                                console.log(sessvars.ccValues);
-                                console.log(sessvars.codeToName);                
-                                
-                                // als je in de selectbox selecteert
-                                $('#country').on('change', function() {
-                                    //alert(this);
-                                    console.log(this); 
-                                    selectCountry(this);
-                                });                   
-                                //console.log(sessvars.codeToName);                    
-                                 console.log(sessvars.codeToName);   
-                                
-                                $('#submitbutton').click(function() {                                    
-                                    submitCountries();
-                                });
-                                
-                                $('img.producticon').click(function() {
-                                    //alert(this.id );
                                     
-                                    addProductData(this);
+                                        //console.log(ccs);       
+                                        //console.log("workData2:");
+                                        console.log(sessvars.ccValues);
+                                        console.log(sessvars.codeToName);                
+                                        
+                                        // als je in de selectbox selecteert
+                                        $('#country').on('change', function() {
+                                            //alert(this);
+                                            console.log(this); 
+                                            selectCountry(this);
+                                        });                   
+                                        //console.log(sessvars.codeToName);                    
+                                         console.log(sessvars.codeToName);   
+                                        
+                                        $('#submitbutton').click(function() {                                    
+                                            submitCountries();
+                                        });
+                                        
+                                        $('img.producticon').click(function() {
+                                            //alert(this.id );
+                                           
+                                            addProductData(this);
+                                         
+                                        });
+                                        
+                                        $('#tooltipinfo').css("display", "none");
+                                        $('#rectangles').css("display", "inline");
+                                        barChart();
+                                    
                                 });
                             });
                         });
@@ -266,11 +300,7 @@
                 You selected from the map: 
             </p>
             <div id="resultingcountries"></div>
-			<p> 
-                Spider chart: 
-            </p>
-			<div id="spiderchart"></div>
-           
+            
         </div> <!-- id = secondttab -->
     <a name="secondtabsection"></a>  
     </div> <!-- id = wrapper -->

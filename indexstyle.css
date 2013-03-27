@@ -74,26 +74,44 @@ p.info {
 #secondtab {
     text-align: left;
     margin-top: 11px;
-    idth: 990px;
+    width: 990px;
 	min-width: 990px;
 	float: left;
 }
 
 #tooltipinfo {
+    padding: 5px;
     width: 260px;
     height: 150px;
-    border: 1px solid black;
+    border: 0px solid black;
     font-size: 11px;
     text-align: right;
+    float:left;
+    background-color: #1a565b; 
+    border-radius: 5px;
 }
 
+#rectangles {
+    padding: 5px;
+    position: relative;
+    width: 260px;
+    height: 150px;
+    border: 0px solid black;
+    font-size: 11px;
+    text-align: left;
+    float: left;
+    background-color: #1a565b; 
+    border-radius: 5px;
+   
+    
+}
 
 #sidetomap {
     height: 380px;
     width: 275px;
     float:left;
     margin-top: 5px;    
-    border: 1px solid black;
+    border: 0px solid black;
     -webkit-box-flex: 1;
 }
 
@@ -101,7 +119,7 @@ p.info {
     width: 260px;
     float: left;
     margin: 7px;    
-    border: 1px solid black;
+    border: 0px solid black;
 }
 
 #location-selected {
@@ -111,7 +129,7 @@ p.info {
     margin-left: 10px;    
     padding-left: 10px;
     text-align:left;
-    border: 1px solid black;
+    border: 0px solid black;
     font-size: 13px;
 }
 
@@ -122,7 +140,7 @@ p.info {
     max-height:50px;
     float: left;
 	font-size: 10px;
-	border: 1px solid black;
+	border: 0px solid black;
 	font-family: 'Oxygen', Verdana, Geneva, sans-serif;
 	color: #e7e3d0;
     text-align:left;
@@ -174,8 +192,8 @@ ul#location-selected li {
 }
 
 .producticon {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     margin: 5px 1% 0px 1%; 
     
 }
@@ -183,4 +201,37 @@ ul#location-selected li {
 #submitbutton {
     margin-top: 0px;
     float: right;
+}
+
+.xaxis  {
+    font-family: 'Oxygen', sans-serif;
+    font-size: 9px;
+    font-style: bold;
+    fill: #c8c7c1;
+}
+
+.xaxis text {
+    font-family: 'Oxygen', sans-serif;
+    font-size: 9px;
+    font-style: bold;
+    fill: #c8c7c1;
+}
+
+
+.yaxistext {
+    font-family: 'Oxygen', sans-serif;
+    font-size: 9px;
+    font-style: bold;
+    fill: #c8c7c1;
+}
+
+.xaxis path {
+    
+    fill: none;
+    stroke: none;              
+}
+
+.xaxis line {
+    fill: none;
+    stroke: none;               
 }
