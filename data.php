@@ -50,7 +50,7 @@
     <a name="firsttabsection"></a>  
     <div id="header">
 		<img src="images/header.png" alt=""></br>
-        <p>Compare the number of hours you have to work for a product per country on the minimum wage of that country.</br>
+        <p="info">Compare the number of hours you have to work for a product per country on the minimum wage of that country.</br>
 		See for more information about the product prices <a href="http://www.numbeo.com">this site</a>.</br></p>
     </div>
 	

@@ -8,8 +8,8 @@ body {
 	background-repeat: repeat;
 }
 
-p {
-    font-size: 16px;
+p.info{
+    font-size: 12px;
     font-style: oblique;
     margin: 0;
 	padding: 0;
@@ -18,4 +18,22 @@ p {
 .splash{
 	text-align: center;
 	padding-top: 10%; 
+}
+
+#text {
+    font-size: 13px;
+    text-align: center;
+    width: 990px;
+	padding-top: 15px;
+	padding-right: 16px;
+	padding-bottom: 16px;
+	padding-left: 16px;
+	margin-top: 11px;
+	margin-right: auto;
+	margin-bottom: 0px;
+	margin-left: auto;
+}
+
+a {
+	color: #C8C7C1;
 }
