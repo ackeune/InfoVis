@@ -18,12 +18,12 @@
         
         <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
         <!-- <script type="text/javascript" src="fisheye.js"></script> -->
-        <!-- <script type="text/javascript" src="qtip1.js"></script>-->
+      <!-- <script type="text/javascript" src="qtip.js"></script>-->
         
         <!-- sugar.js breekt met jqueryvmap dus underscore -->
         <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
         
-        <script type="text/javascript" src="radarchart.js"></script>
+        <script type="text/javascript" src="radarchart2.js"></script>
         <!-- mijn code -->
         <script type="text/javascript" src="mycode.js"></script>
         
@@ -47,7 +47,7 @@
     <body>
     
    
-    
+    <a name="firsttabsection"></a>  
     <div id="header">
 		<img src="images/header.png" alt=""></br>
         <p>Compare the number of hours you have to work for a product per country on the minimum wage of that country.</br>
@@ -59,7 +59,7 @@
 	<div id="wrapper">
         
         <div id="firsttab" >
-                First tab </br>
+                <p class="info">Click on a product icon below the map too see the workload with that product added.  </p>
 
                 <div id="my_jqvmap" class="jqvmap"></div> <!-- world map-->
 
@@ -76,7 +76,7 @@
                             
                         </div>
                         <div id="rectangles">
-                        <p class="info"> Workload distribution</p>
+                        <p class="info"> Worldwide workload for selected products</p>
                         </div>
                     </div>
 
@@ -115,12 +115,16 @@
                     <img src="images/icons/movie-seleted.png" alt="Movie ticket" class="producticon" id="movie" />
                 </div>
                 <div id="submitbutton">
-                    <a href="#secondtabsection"><img id="submitbutton" src="images/icons/show for products-2.png" width="171px" height="85px""></src></a>
+                    <a href="#secondtabsection"><img id="submitbutton" src="images/icons/compare-countries.png" width="230.75px" height="65px""></src></a>
                 </div>
             </div>
+         
+            
+            <hr size=5 class="division">
+           
             
             <div id="secondtab">                
-                    Second tab </br>                    
+                    <p class="info">Hover over the chart for country info.</p>                    
                     
                     <script>                    
                         var ccs = [];
@@ -174,7 +178,8 @@
                                                     }
                                                 },                                        
                                                  onRegionOut: function(event, code, region){
-                                                    var active = sessvars.ccValues[code] != absentColor;  // data voor land
+                                                    countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
+                                                    var active = isNumber(countryMatrixData['wage per minute']);
                                                     if (active) {
                                                         $('#tooltipinfo #' + code).remove();
                                                          $('#tooltipinfo .info').remove();
@@ -185,12 +190,14 @@
                                                     }
                                                  },                                         
                                                  onRegionOver: function(element, code, region) {
-                                                    var active = sessvars.ccValues[code] != absentColor;
+                                                    countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
+                                                    var active = isNumber(countryMatrixData['wage per minute']);
+                                                   // var active = sessvars.ccValues[code] != absentColor;
                                                     if (active) {
                                                         $('#rectangles').css("display", "none");
                                                         $('#tooltipinfo').css("display", "inline");
                                                         $('#tooltipinfo #none').remove();
-                                                        $('#tooltipinfo').append('<p class=info>In <b>' + sessvars.codeToName[code] + '</b> you need to work... </br></p><p id='+ code + '> ' + getTextData(code) + ' </p>');
+                                                        $('#tooltipinfo').append('<p class=info><b>'+  getTotalTextData(code) + '</b> you need to work for these products in total in <b>' + sessvars.codeToName[code] + '</b>: </br></p><p id='+ code + ' class="small"> ' + getTextData(code) + ' </p>');
                                                     }                                            
                                                     if (!active) {
                                                         
@@ -283,7 +290,7 @@
                                         
                                         $('#tooltipinfo').css("display", "none");
                                         $('#rectangles').css("display", "inline");
-                                        barChart();
+                                        barChartOnce();
                                     
                                 });
                             });
@@ -300,15 +307,17 @@
                     
                 </script>   
             
-            <p> 
+            <!-- <p> 
                 You selected from the map: 
-            </p>
+            </p> -->
             <div id="resultingcountries"></div>
             <div id="viz">
-            <div id="spiderchart">
+                <div id="spiderchart">
+                
             </div>
-
-
+            <div id="backtoptop">
+                <a href="#firsttabsection"><img id="backbutton" src="images/icons/back-to-top.png" width="50px" height="50px" alt="Back to top"></src></a>
+            </div>
 
         </div> <!-- id = secondttab -->
     <a name="secondtabsection"></a>  

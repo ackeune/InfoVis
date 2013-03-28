@@ -19,14 +19,51 @@ body {background-color:#404041;}
     stroke-width:1px;
 }
 
-.back {
-    stroke: #ffffff;
-    stroke-width: 2.5;
-	opacity: 0.5;
+.country0{
+	fill: #ed1c24;
+	stroke: #ed1c24;
 }
 
-text.shadow {
-    stroke: #ffffff;
-    stroke-width: 2.5;
-	opacity: 0.5;
+.country1{
+	fill: #f15a29;
+	stroke: #f15a29;
+}
+
+.country2{
+	fill: #fff100;
+	stroke: #fff100;
+}
+
+.country3{
+	fill: #94e01b;
+	stroke: #94e01b;
+}
+
+.country4{
+	fill: #4dd5ff;
+	stroke: #4dd5ff;
+}
+
+.country5{
+	fill: #1e29f7;
+	stroke: #1e29f7;
+}
+.country6{
+	fill: #0e0e51;
+	stroke: #0e0e51;
+}
+
+.country7{
+	fill: #763cd3;
+	stroke: #763cd3;
+}
+
+.country8{
+	fill: #631f4c;
+	stroke: #631f4c;
+}
+
+.country9{
+	fill: #ec008b;
+	stroke: #ec008b;
 }

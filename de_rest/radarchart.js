@@ -2,7 +2,7 @@ var dataCountries,
     labels,
     minVal,
     maxVal,
-    w = 400,
+    w = 600,
     h = 400,
     vizPadding = {
         top: 30,
@@ -25,6 +25,8 @@ var loadViz = function(){
   draw();
 };
 
+//////////////
+
 var makeSpiderChart = function(countriesAndColors ){
   getDataCountries(countriesAndColors );
   buildBase();
@@ -46,8 +48,8 @@ var loadData = function(){
 	  []
     ];
 
-    labels = [];
-    labels = ["cappuchino","jeans","bread","internet","sneakers", "movie","prepaid","mcdonalds"];
+    //labels = [];
+   // labels = ["cappuchino","jeans","bread","internet","sneakers", "movie","prepaid","mcdonalds"];
     for (i = 0; i < 8; i += 1) {
         dataCountries[0][i] = randomFromTo(0,20);
         dataCountries[1][i] = randomFromTo(5,15);
@@ -89,7 +91,7 @@ var findMinMax = function(array){
 }
 
 function getDataCountries(countriesAndColors) {
-	labels = ["cappuchino","jeans","bread","internet","sneakers", "movie","prepaid","mcdonalds"]; //TODO put somewhere else
+//	labels = ["cappuchino","jeans","bread","internet","sneakers", "movie","prepaid","mcdonalds"]; //TODO put somewhere else
     console.log("IN RADAR");
 
 	dataCountries = new Array();
@@ -101,7 +103,7 @@ function getDataCountries(countriesAndColors) {
 		
 		countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(productNames, prod.name); });
 		console.log(countryMatrixProductData);
-		for(var j=0; j < labels.length; j++){
+		for(var j=0; j < productNames.length; j++){
 			a = countryMatrixProductData[j].minutes;
 			dataCountries[i][j] = a;
 		}	
@@ -123,6 +125,8 @@ function getDataCountries(countriesAndColors) {
  }
 
 var buildBase = function(){
+    $(".vizSvg").remove();
+    
     var viz = d3.select("#spiderchart")
         .append('svg:svg')
         .attr('width', w)
@@ -154,7 +158,8 @@ setScales = function () {
   circleConstraint = d3.min([
       heightCircleConstraint, widthCircleConstraint]);
 
-  radius = d3.scale.linear().domain([minVal, maxVal])
+  radius = d3.scale.linear()
+       .domain([minVal, maxVal])
       .range([0, (circleConstraint / 2)]);
   radiusLength = radius(maxVal);
 
@@ -196,11 +201,11 @@ addAxes = function () {
       .text(String);
 
   lineAxes = vizBody.selectAll('.line-ticks')
-      .data(labels)
+      .data(productNames)
       .enter().append('svg:g')
       .attr("transform", function (d, i) {
-          return "rotate(" + ((i / labels.length * 360) - 90) +
-              ")translate(" + radius(maxVal) + ")";
+          return "rotate(" + ((i / productNames.length * 360) - 90) +
+              ")translate(" + (radius(maxVal)+10) + ")";
       })
       .attr("class", "line-ticks");
 
@@ -218,32 +223,163 @@ addAxes = function () {
       });
 };
 
+  
+
+
+
 var draw = function () {
+
+    // var tooltip = vizBody.append('div')
+    // .attr({ transform: 'translate(5,20)', fill:'white'})
+   // //  .append("div")
+    // .style("visibility", "hidden")
+   // // .append('text')
+        // .text("Node Info");
+    var tooltip = d3.select("#spiderchart")
+     .append("div")
+         .attr("class", "tooltip")
+     .style("background-color","black")
+     .style("margin", "10px")
+     .style("padding", "5px")
+     .style("border-radius",3)
+     .style("position", "absolute")
+     .style("z-index", "10")
+     .style("opacity", 0);
+        
   var groups,
       lines,
       linesToUpdate;
-	console.log("data in draw");
+    console.log("data in draw");
 	console.log(dataCountries);
-  highlightedDotSize = 4;
-  groups = vizBody.selectAll('.dataCountries')
+    highlightedDotSize = 4;
+    groups = vizBody.selectAll('.dataCountries')
       .data(dataCountries);
-  groups.enter().append("svg:g")
-      .attr("class", function (d, i){
-		return 'country' + i;
-	  })
-	  /*
-	  .attr('class', 'dataCountries')
-	  
-      .style('stroke', function (d, i) { //TODO make dynamic
-		return countryColours[i]
-      })
+      
+    groups.enter().append("svg:g")
+      .attr("class", "countrysvg")
+      .attr("id", function(d,i) { return "line"+i; })
+      
 	  .attr('fill', function (d, i) {
-		return countryColours[i]
-	  })
-	  */
-	  
-	  .attr('opacity', 0.3);
-	  
+		return countryColours[i];
+	  })        
+      .attr('stroke', function(d,i) { console.log(countryColours[i]); return countryColours[i];})
+      .style('stroke-opacity', 0.9) 
+      .style('stroke-width', 0.5)
+      .attr("stroke-linecap", "round")      
+      .attr('fill-opacity', 0.3)
+      
+      .on("mouseover", function(d,i) { 
+            var mousePos = d3.mouse(this);
+            
+           
+            console.log(mousePos);
+            
+           // tooltip.attr("visibility", "visible");
+           // tooltip.attr({transform: 'translate(' + mousePos + ')'});
+          
+
+            tooltip.html(
+                    sessvars.codeToName[countriesAndColors[i].code.toLowerCase()]
+                    + ": </br>"+ 
+                    getTextDataAllProducts(countriesAndColors[i].code.toLowerCase()))
+                .transition().duration(600)
+                .style("opacity", .7)
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+           
+            
+        })
+        .on("mousemove", function(d,i) { 
+            var mousePos = d3.mouse(this);
+            tooltip
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+        })
+        
+        .on("mouseout", function(d,i) { 
+            var mousePos = d3.mouse(this);
+             tooltip.html("bla</br>")
+                .transition().duration(600)
+                .style("opacity", 0)
+        });
+    
+    
+  var legendPosition = {x: 200, y: 10, dimensionsRect: 15};
+        
+         var legend = vizBody.selectAll('.dataCountries')
+              .data(dataCountries/*.slice().reverse()*/)
+                .enter()
+                    .append("svg")
+                      .attr("y", legendPosition.y)                      
+                      .append("g")
+                        .attr("class", "legend")
+                        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        
+          legend.append("rect")
+              .attr("id", function(d,i) { return "legendrect"+i;})
+              .attr("x", legendPosition.x)
+              .attr("width", legendPosition.dimensionsRect)
+              .attr("height", legendPosition.dimensionsRect)
+              .on("click", function(d,i) {editOpacity(i); })
+              .attr('stroke', function(d,i) { console.log(countryColours[i]); return countryColours[i];})
+              .style("fill", function(d,i) { console.log(countryColours[i]); return countryColours[i];})
+              .style("fill-opacity", 0.3);
+        
+      
+          legend.append("text")          
+              .attr("x", legendPosition.x + legendPosition.dimensionsRect + 5)
+              .attr("y", legendPosition.y )
+              .attr("dy", ".35em")
+              .style("text-anchor", "begin")      
+              .on("click", function(d,i) {editOpacity(i); })
+              .text(function(d,i) { return sessvars.codeToName[countriesAndColors[i].code.toLowerCase()]; })
+                .attr('fill', "#c8c7c1" /*function(d,i) { return countryColours[i];}*/);
+              
+  function editOpacity(i) {
+        var bla = d3.select("#line"+i);
+        var bla2 = d3.select("#legendrect"+i);
+        
+        var op = bla2.style('fill-opacity');
+        
+        if (op == 1) {
+           
+            bla2.transition().duration(600).style('fill-opacity', 0.3);
+            bla.transition().duration(600).attr('fill-opacity', 0.3);
+            
+        }
+        else {
+            bla.attr("display","inline");
+            bla2.transition().duration(600).style('fill-opacity', 1);
+            bla.transition().duration(600).attr('fill-opacity', 0.9);
+           
+            bla.style('stroke-opacity', 0.9);
+             
+        }
+        
+        for (var j=0; j < count; j++) {
+            if (i != j) {
+                var bla = d3.select("#line"+j);
+                var bla2 = d3.select("#legendrect"+j);
+                
+               
+                
+                if (op == 1) {
+                    bla.attr("display","inline");
+                    bla2.transition().duration(600).style('fill-opacity', 0.3);
+                    bla.transition().duration(600).attr('fill-opacity', 0.3);
+                    bla.style('stroke-opacity', 0.9);
+                }
+                else {
+                     bla2.transition().duration(600).style('fill-opacity', 0.3);
+                     bla.transition().duration(600).attr('fill-opacity', 0);
+                     bla.style('stroke-opacity', 0);
+                      bla.attr("display","none");
+                }
+            }
+        
+        }
+    }
+
   groups.exit().remove();
 
   lines = groups.append('svg:path')

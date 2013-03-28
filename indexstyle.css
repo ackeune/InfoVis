@@ -9,21 +9,34 @@ body {
 	background-repeat: repeat;
 }
 
-p.info{
+p.info {
     font-size: 12px;
-    font-style: oblique;
+    text-align: left;
     margin: 0;
 	padding: 0;
 }
 
-h1 {
-	color: #ffffff;
+p.small {
+    font-size: 11px;
+    margin: 4;
+	padding: 4;
 }
 
-img {
-	float: left;
-	margin-left: 16px;
+hr.division{
+    color: #808080;
+    background-color: #808080;
+    border: 0;
+    text-align:center;
+    margin: 7px;
+    margin-top: 30px;
+    margin-bottom:20px;
+    float: left;
+    width: 679px;
+    border-radius:3px;
+    
 }
+
+
 
 #header {
     font-size: 13px;
@@ -37,26 +50,6 @@ img {
 	margin-right: auto;
 	margin-bottom: 0px;
 	margin-left: auto;
-}
-
-#belt {
-	background-image: url(images/splash/splash-screen-belt.png);
-	background-position: center center;
-	background-repeat: no-repeat;
-    text-align: center;
-    width: 990px;
-	padding-top: 15px;
-	padding-right: 16px;
-	padding-bottom: 16px;
-	padding-left: 16px;
-	margin-top: 11px;
-	margin-right: auto;
-	margin-bottom: 0px;
-	margin-left: auto;
-}
-
-a {
-	color: #C8C7C1;
 }
 
 #wrapper {
@@ -107,8 +100,16 @@ a {
 	float: left;
 }
 
+#viz {
+    text-align: left;
+    margin-top: 11px;
+    width: 600px;
+	min-width: 600px;
+	float: left;
+}
+
 #tooltipinfo {
-    padding: 5px;
+    padding: 7px;
     width: 260px;
     height: 150px;
     border: 0px solid black;
@@ -120,7 +121,7 @@ a {
 }
 
 #rectangles {
-    padding: 5px;
+    padding: 7px;
     position: relative;
     width: 260px;
     height: 150px;
@@ -194,7 +195,7 @@ ul#location-selected li {
   background-size: 12px 12px;
   border-radius: 3px;
      
-  background-color: #2b929b;
+  background-color: #434445;
   margin-top: 2px;
   padding: 1px;
   padding-left: 15px;
@@ -223,13 +224,20 @@ ul#location-selected li {
     width: 40px;
     height: 40px;
     margin: 5px 1% 0px 1%; 
+    float: center;
     
 }
 
 #submitbutton {
-    margin-top: 0px;
+    margin-top: 1px;
     float: right;
 }
+
+#backtotop {
+    margin-top: 1px;
+    float: right;
+}
+
 
 .xaxis  {
     font-family: 'Oxygen', sans-serif;
@@ -264,7 +272,51 @@ ul#location-selected li {
     stroke: none;               
 }
 
-#spiderchart {
-
-    color: white;
+.xaxis2 path {
+    
+    fill: none;
+    stroke: none;              
 }
+
+.xaxis2 line {
+    fill: none;
+    stroke: none;               
+}
+
+
+
+h1 {
+	color: #ffffff;
+}
+
+img {
+	float: left;
+	margin-left: 16px;
+}
+
+
+
+#belt {
+	background-image: url(images/splash/splash-screen-belt.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+    text-align: center;
+    width: 990px;
+	padding-top: 15px;
+	padding-right: 16px;
+	padding-bottom: 16px;
+	padding-left: 16px;
+	margin-top: 11px;
+	margin-right: auto;
+	margin-bottom: 0px;
+	margin-left: auto;
+}
+
+a {
+	color: #C8C7C1;
+}
+
+a:link {text-decoration:none;}
+a:visited {text-decoration:none;}
+a:hover {text-decoration:underline;}
+a:active {text-decoration:underline;}
