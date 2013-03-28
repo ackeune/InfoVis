@@ -533,12 +533,17 @@ function submitCountries() {
     // for(var i=0; i < countriesAndColors.length; i++) { 
         // document.getElementById("resultingcountries").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
     // }
-    document.getElementById("spiderchart").innerHTML = "";
-    document.getElementById("spiderchart2").innerHTML = "";
-    document.getElementById("legend").innerHTML = "";
-    makeSpiderChart(countriesAndColors);
-    makeSpiderChart2(countriesAndColors);
-    $('#secondtab').css("display", "inline"); 
+    if (count > 0) {
+        document.getElementById("spiderchart").innerHTML = "";
+        document.getElementById("spiderchart2").innerHTML = "";
+        document.getElementById("legend").innerHTML = "";
+        makeSpiderChart(countriesAndColors);
+        makeSpiderChart2(countriesAndColors);
+        $('#secondtab').css("display", "inline"); 
+    }
+    else {
+        $('#secondtab').css("display", "none"); 
+    }
 }
 
  function addProductData (img)

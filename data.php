@@ -7,7 +7,7 @@
         <link href='http://fonts.googleapis.com/css?family=Oxygen:400,700,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
         <meta charset="utf-8">
-        <title>Trade your Life | test</title>
+        <title>Trade your Life</title>
 
         <!-- dit script zorgt voor  gesimuleerde sessievariabelen met puur javascript -->
         <!-- ze worden allemaal ge-prefixed met "sessvars."-->
