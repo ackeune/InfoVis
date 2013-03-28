@@ -76,7 +76,7 @@ hr.division{
 	border: 1px solid #393833;
 	margin-top: 11px;
 	margin-right: auto;
-	margin-bottom: 0px;
+	margin-bottom: 21px;
 	margin-left: auto;
 	/*background-image: url(images/wrapper_bg2.jpg);
 	background-repeat: repeat;*/
@@ -118,7 +118,8 @@ hr.division{
 #viz {
     text-align: left;
     margin-top: 11px;
-	min-width: 900px;
+    width:900px;
+	min-width: 800px;
 	float: left;
 }
 
@@ -269,8 +270,9 @@ ul#location-selected li {
 }
 
 #backtotop {
-    margin-top: 1px;
+    margin-top: 360px;
     float: right;
+    width: 20px;
 }
 
 

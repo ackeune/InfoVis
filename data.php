@@ -322,10 +322,11 @@
                 </div>
                 <div class="spider" id="spiderchart"></div>                
                 <div class="spider" id="spiderchart2"></div>
+                <div id="backtotop">
+                    <a href="#firsttabsection"><img id="backbutton" src="images/icons/back-to-top.png" width="50px" height="50px" alt="Back to top"></src></a>
+                </div>
             </div>
-            <div id="backtoptop">
-                <a href="#firsttabsection"><img id="backbutton" src="images/icons/back-to-top.png" width="50px" height="50px" alt="Back to top"></src></a>
-            </div>
+            
 
         </div> <!-- id = secondttab -->
     <a name="secondtabsection"></a>  
