@@ -24,6 +24,7 @@
         <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
         
         <script type="text/javascript" src="radarchart2.js"></script>
+        <script type="text/javascript" src="radarchart2b.js"></script>
         <!-- mijn code -->
         <script type="text/javascript" src="mycode.js"></script>
         
@@ -50,7 +51,7 @@
     <a name="firsttabsection"></a>  
     <div id="header">
 		<img src="images/header.png" alt=""></br>
-        <p="info">Compare the number of hours you have to work for a product per country on the minimum wage of that country.</br>
+        <p class="info">Compare the number of hours you have to work for a product per country on the minimum wage of that country.</br>
 		See for more information about the product prices <a href="http://www.numbeo.com">this site</a>.</br></p>
     </div>
 	
@@ -59,7 +60,7 @@
 	<div id="wrapper">
         
         <div id="firsttab" >
-                <p class="info">Click on a product icon below the map too see the workload with that product added.  </p>
+                <p class="info">Click on a product icon below the map too see the workload with that product added. </br> Select countries first to compare them individually.</p>
 
                 <div id="my_jqvmap" class="jqvmap"></div> <!-- world map-->
 
@@ -291,6 +292,8 @@
                                         $('#tooltipinfo').css("display", "none");
                                         $('#rectangles').css("display", "inline");
                                         barChartOnce();
+                                        
+                                        $('#secondtab').css("display", "none"); 
                                     
                                 });
                             });
@@ -312,8 +315,13 @@
             </p> -->
             <div id="resultingcountries"></div>
             <div id="viz">
-                <div id="spiderchart">
-                
+                <div id="legend"></div>
+                <div id="spiderinfoblock">
+                    <div class="spiderinfo">Absolute work load</div>
+                    <div class="spiderinfo">Work load relative to life expectancy</div>
+                </div>
+                <div class="spider" id="spiderchart"></div>                
+                <div class="spider" id="spiderchart2"></div>
             </div>
             <div id="backtoptop">
                 <a href="#firsttabsection"><img id="backbutton" src="images/icons/back-to-top.png" width="50px" height="50px" alt="Back to top"></src></a>

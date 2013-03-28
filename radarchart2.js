@@ -3,7 +3,7 @@ var dataCountries,
     maxVal,
     minValues,
     maxValues,
-    w = 540,
+    w = 400,
     h = 400,
     vizPadding = {
         top: 35,
@@ -329,16 +329,18 @@ var draw = function (countriesAndColors) {
          .style("z-index", "20")
          .style("opacity", 0);
      //////
- var legendPosition = {x: 5, y: 15, dimensionsRect: 15};
+ var legendPosition = {x: 0, y: 18, dimensionsRect: 15};
         
-         var legend = d3.selectAll('.vizSvg').selectAll('.legend')
+         var legend = d3.select('#legend').selectAll('.legend')
               .data(dataCountries/*.slice().reverse()*/)
                 .enter()
                     .append("svg")
+                      .attr("width", 800)
+                      .attr("height", legendPosition.dimensionsRect + 5)
                       .attr("y", legendPosition.y)                      
                       .append("g")
-                        .attr("class", "legend")
-                        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+                       .attr("class", "legend");
+                        //.attr("transform", function(d, i) { return "translate(0," + i * -2 + ")"; });
         
           legend.append("rect")
               .attr("id", function(d,i) { return "legendrect"+i;})
@@ -346,8 +348,8 @@ var draw = function (countriesAndColors) {
               .attr("width", legendPosition.dimensionsRect)
               .attr("height", legendPosition.dimensionsRect)
               .on("click", function(d,i) {editOpacity(i); })
-              .attr('stroke', function(d,i) { console.log(countryColours[i]); return countryColours[i];})
-              .style("fill", function(d,i) { console.log(countryColours[i]); return countryColours[i];})
+              .attr('stroke', function(d,i) { return countriesAndColors[i].color;})
+              .style("fill", function(d,i) {  return countriesAndColors[i].color;})
               .style("fill-opacity", 0.3);
         
       
@@ -368,9 +370,9 @@ var draw = function (countriesAndColors) {
       .attr("id", function(d,i) { return "line"+i; })
       
 	  .attr('fill', function (d, i) {
-		return countryColours[i];
+		return  countriesAndColors[i].color;
 	  })        
-      .attr('stroke', function(d,i) { console.log(countryColours[i]); return countryColours[i];})
+      .attr('stroke', function(d,i) {  return  countriesAndColors[i].color;})
       .style('stroke-opacity', 0.9) 
       .style('stroke-width', 0.5)
       .attr("stroke-linecap", "round")      
@@ -415,6 +417,7 @@ var draw = function (countriesAndColors) {
               
   function editOpacity(i) {
         var bla = d3.select("#line"+i);
+        var blaR = d3.select("#line2"+i);
         var bla2 = d3.select("#legendrect"+i);
         
         var op = bla2.style('fill-opacity');
@@ -423,35 +426,48 @@ var draw = function (countriesAndColors) {
            
             bla2.transition().duration(600).style('fill-opacity', 0.3);
             bla.transition().duration(600).attr('fill-opacity', 0.3);
+            blaR.transition().duration(600).attr('fill-opacity', 0.3);
             
         }
         else {
             bla.attr("display","inline");
+            blaR.attr("display","inline");
             bla2.transition().duration(600).style('fill-opacity', 1);
-            bla.transition().duration(600).attr('fill-opacity', 0.9);
-           
+            
+            bla.transition().duration(600).attr('fill-opacity', 0.9);           
             bla.style('stroke-opacity', 0.9);
+            blaR.transition().duration(600).attr('fill-opacity', 0.9);           
+            blaR.style('stroke-opacity', 0.9);
              
         }
         
         for (var j=0; j < count; j++) {
             if (i != j) {
                 var bla = d3.select("#line"+j);
+                var blaR = d3.select("#line2"+j);
                 var bla2 = d3.select("#legendrect"+j);
                 
                
                 
                 if (op == 1) {
                     bla.attr("display","inline");
+                    blaR.attr("display","inline");
                     bla2.transition().duration(600).style('fill-opacity', 0.3);
                     bla.transition().duration(600).attr('fill-opacity', 0.3);
                     bla.style('stroke-opacity', 0.9);
+                    blaR.transition().duration(600).attr('fill-opacity', 0.3);
+                    blaR.style('stroke-opacity', 0.9);
                 }
                 else {
                      bla2.transition().duration(600).style('fill-opacity', 0.3);
+                     
                      bla.transition().duration(600).attr('fill-opacity', 0);
                      bla.style('stroke-opacity', 0);
-                      bla.attr("display","none");
+                     bla.attr("display","none");
+                     
+                     blaR.transition().duration(600).attr('fill-opacity', 0);
+                     blaR.style('stroke-opacity', 0);
+                     blaR.attr("display","none");
                 }
             }
         

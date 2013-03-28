@@ -94,7 +94,7 @@ function loadD3Data() {
                     
                     // de html selector stuff
                     //$('#country').append("<option value=\"" + d["CC"] + "\">" + d["COUNTRY"] + "</option>");
-                    console.log( d["CC"]);
+                   // console.log( d["CC"]);
                     
                     //console.log(sessvars.codeToName[d["CC"].toLowerCase()]);
                 });
@@ -125,6 +125,12 @@ function fillMinutesMatrix(productName) {
         for (var j = 0; j < sessvars.workData2[i]["products"].length; j++) {
             if (productName == sessvars.workData2[i]["products"][j].name) {
                 sessvars.workData2[i]["products"][j]["minutes"] = calcMinutesToWork(sessvars.workData2[i]["products"][j]["cost"], sessvars.workData2[i]["wage per minute"]);
+                if (isNumber(sessvars.workData2[i]["years"])) {
+                    sessvars.workData2[i]["products"][j]["percentage"] =  calcPercentage(sessvars.workData2[i]["years"], sessvars.workData2[i]["products"][j]["minutes"]) 
+                }
+                else {
+                    sessvars.workData2[i]["products"][j]["percentage"] = 0;
+                }
             }
         }
     }
@@ -528,7 +534,11 @@ function submitCountries() {
         // document.getElementById("resultingcountries").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
     // }
     document.getElementById("spiderchart").innerHTML = "";
+    document.getElementById("spiderchart2").innerHTML = "";
+    document.getElementById("legend").innerHTML = "";
     makeSpiderChart(countriesAndColors);
+    makeSpiderChart2(countriesAndColors);
+    $('#secondtab').css("display", "inline"); 
 }
 
  function addProductData (img)
@@ -640,6 +650,25 @@ function getTotalTextData(countryCode) {
     return text;
  }
  
+ 
+function getTextDataPercentagesAllProducts(countryCode) {
+    countryCode = countryCode.toUpperCase();
+    countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
+    countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(productNames, prod.name); });
+    //console.log(countryMatrixProductData);
+    var text = "";
+    for(var i=0; i < countryMatrixProductData.length; i++) {
+    
+        var data = calcPercentage(countryMatrixData["years"], countryMatrixProductData[i].minutes)
+        //data = data * 100;
+        
+        text += data.toFixed(4)  + " percentage of your life for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+       
+    }
+    return text;
+ }
+ 
+ 
  function yearsToMinutes(years) {
  
     var nrLeapYears = Math.floor(years % 4);
@@ -651,10 +680,11 @@ function getTotalTextData(countryCode) {
  }
  
  function calcPercentage(totalYears, minutesWork) {
- 
+    //console.log("totalYears:"+ totalYears);
     var totalMinutesAlive = yearsToMinutes(totalYears);
+    //console.log("totalMinutesAlive:"+ totalMinutesAlive);
     var percentageWorking = (100 / totalMinutesAlive) * minutesWork;
-    return percentageWorking.toFixed(2);
+    return percentageWorking;
 }
  
  function calcBarChartData() {
@@ -732,8 +762,6 @@ function getTotalTextData(countryCode) {
         return ["hours", hours];
     }
     return ["minutes", minutes];
-        
- 
  
  }
  
