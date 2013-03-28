@@ -321,6 +321,7 @@ var draw = function (countriesAndColors) {
     var tooltip = d3.select("#spiderchart")
      .append("div")
          .attr("class", "tooltip")
+         .attr("id", "tooltip")
          .style("background-color","#1b1b1b")
          .style("margin", "10px")
          .style("padding", "5px")
@@ -329,6 +330,9 @@ var draw = function (countriesAndColors) {
          .style("z-index", "20")
          .style("opacity", 0);
      //////
+     
+
+ 
  var legendPosition = {x: 0, y: 18, dimensionsRect: 15};
         
          var legend = d3.select('#legend').selectAll('.legend')
@@ -387,7 +391,9 @@ var draw = function (countriesAndColors) {
            // tooltip.attr("visibility", "visible");
            // tooltip.attr({transform: 'translate(' + mousePos + ')'});
           
-
+            $('#tooltip2').css("display", "none");
+             $('#tooltip').css("display", "inline");
+             
             tooltip.html(
                     sessvars.codeToName[countriesAndColors[i].code.toLowerCase()]
                     + ": </br>"+ 
@@ -411,6 +417,7 @@ var draw = function (countriesAndColors) {
              tooltip
                 .transition().duration(600)
                 .style("opacity", 0)
+                .attr("display","none");
         });
 	
     

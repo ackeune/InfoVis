@@ -118,7 +118,7 @@ hr.division{
 #viz {
     text-align: left;
     margin-top: 11px;
-	min-width: 650px;
+	min-width: 900px;
 	float: left;
 }
 
@@ -129,7 +129,13 @@ hr.division{
 	float: left;
 }
 
+#spiderchart {
+	float: left;
+}
 
+#spiderchart2 {
+	float: left;
+}
 
 .spider {
     /*position: relative;*/

@@ -179,8 +179,8 @@
                                                     }
                                                 },                                        
                                                  onRegionOut: function(event, code, region){
-                                                    countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
-                                                    var active = isNumber(countryMatrixData['wage per minute']);
+                                                    //countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
+                                                    var active = sessvars.ccValues[code] != absentColor; //isNumber(countryMatrixData['wage per minute']);
                                                     if (active) {
                                                         $('#tooltipinfo #' + code).remove();
                                                          $('#tooltipinfo .info').remove();
@@ -191,8 +191,8 @@
                                                     }
                                                  },                                         
                                                  onRegionOver: function(element, code, region) {
-                                                    countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
-                                                    var active = isNumber(countryMatrixData['wage per minute']);
+                                                    //countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
+                                                    var active = sessvars.ccValues[code] != absentColor; //isNumber(countryMatrixData['wage per minute']);
                                                    // var active = sessvars.ccValues[code] != absentColor;
                                                     if (active) {
                                                         $('#rectangles').css("display", "none");

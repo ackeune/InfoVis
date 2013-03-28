@@ -322,12 +322,13 @@ var draw2 = function (countriesAndColors) {
     var tooltip2 = d3.select("#spiderchart2")
      .append("div")
          .attr("class", "tooltip")
+         .attr("id", "tooltip2")
          .style("background-color","#1b1b1b")
-         .style("margin2", "10px")
+         .style("margin", "10px")
          .style("padding", "5px")
-         .style("border-radius2",3)
+         .style("border-radius",3)
          .style("position", "absolute")
-         .style("z-index", "22")
+         .style("z-index", "30")
          .style("opacity", 0);
      //////
      
@@ -335,7 +336,7 @@ var draw2 = function (countriesAndColors) {
 		.data(dataCountries2b );
         
     groups.enter().append("svg:g")
-            .attr("class", "countrysvg")
+            .attr("class", "countrysvg2")
       .attr("id", function(d,i) { return "line2"+i; })
       
 	  .attr('fill', function (d, i) {
@@ -346,17 +347,18 @@ var draw2 = function (countriesAndColors) {
       .style('stroke-width', 0.5)
       .attr("stroke-linecap", "round")      
       .attr('fill-opacity', 0.3)
-      
+      .attr("z-index",(10+i))
       .on("mouseover", function(d,i) { 
             var mousePos = d3.mouse(this);
-            
+            console.log(this);
            
             console.log(mousePos);
             
            // tooltip.attr("visibility", "visible");
            // tooltip.attr({transform: 'translate(' + mousePos + ')'});
           
-
+             $('#tooltip').css("display", "none");
+             $('#tooltip2').css("display", "inline");
             tooltip2.html(
                     sessvars.codeToName[countriesAndColors[i].code.toLowerCase()]
                     + ": </br>"+ 
@@ -365,21 +367,28 @@ var draw2 = function (countriesAndColors) {
                 .style("opacity", .7)
                 .style("left", (d3.event.pageX) + "px")     
                 .style("top", (d3.event.pageY - 28) + "px");    
-           
+            
             
         })
-        // .on("mousemove", function(d,i) { 
-            // var mousePos = d3.mouse(this);
-            // tooltip2
-                // .style("left", (d3.event.pageX) + "px")     
-                // .style("top", (d3.event.pageY - 28) + "px");    
-        // })
+        .on("mousemove", function(d,i) { 
+           // $('#tooltip').css("display", "none");
+           // $('#tooltip2').css("display", "inline");
+            var mousePos = d3.mouse(this);
+            tooltip2
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+        })
         
         .on("mouseout", function(d,i) { 
-            var mousePos = d3.mouse(this);
+            
+            
              tooltip2
                 .transition().duration(600)
                 .style("opacity", 0)
+                .attr("display","none");
+                
+          //  $('#tooltip2').css("display", "none");
+            
         });
 	
     

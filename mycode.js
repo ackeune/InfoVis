@@ -99,7 +99,8 @@ function loadD3Data() {
                     //console.log(sessvars.codeToName[d["CC"].toLowerCase()]);
                 });
                 fillMatrixMinutes();
-
+                noProductsNoWage();
+                
                 console.log("workData2 in d3:");
                 console.log(sessvars.workData2);
                 console.log(sessvars.codeToName);
@@ -123,8 +124,10 @@ function fillMatrixMinutes() {
 function fillMinutesMatrix(productName) {
     for (var i = 0; i < sessvars.workData2.length; i++) {
         for (var j = 0; j < sessvars.workData2[i]["products"].length; j++) {
+           
             if (productName == sessvars.workData2[i]["products"][j].name) {
                 sessvars.workData2[i]["products"][j]["minutes"] = calcMinutesToWork(sessvars.workData2[i]["products"][j]["cost"], sessvars.workData2[i]["wage per minute"]);
+                
                 if (isNumber(sessvars.workData2[i]["years"])) {
                     sessvars.workData2[i]["products"][j]["percentage"] =  calcPercentage(sessvars.workData2[i]["years"], sessvars.workData2[i]["products"][j]["minutes"]) 
                 }
@@ -134,6 +137,20 @@ function fillMinutesMatrix(productName) {
             }
         }
     }
+}
+
+function noProductsNoWage() {
+    
+    for (var i = 0; i < sessvars.workData2.length; i++) {
+       var maxProduct =  _.max(sessvars.workData2[i]["products"], function(prod){if(isNumber(prod.cost)) {return prod.cost;} else {return 0;}});
+       var maxPrice = maxProduct.cost;
+       console.log("maxPrice:",maxPrice);
+       if (!isNumber(maxPrice) || maxPrice == 0) { // no data for any product
+            sessvars.workData2[i]["wage per minute"] = "-"; // act like doesnt have min. wage so it gets out of the map
+       }
+   }
+    
+
 }
 
 function calcMinutesToWork(productCost, wageInMinutes) {
@@ -643,13 +660,18 @@ function getTotalTextData(countryCode) {
     //console.log(countryMatrixProductData);
     var text = "";
     for(var i=0; i < countryMatrixProductData.length; i++) {
-    
-        var arr =    rescaleMinutes(countryMatrixProductData[i].minutes );
-        var format = arr[0];
-        var data = arr[1];
         
-        
-        text += data.toFixed(2)  + " " + format + " for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+        if (countryMatrixProductData[i].minutes  != 0 ) {
+            var arr =    rescaleMinutes(countryMatrixProductData[i].minutes );
+            var format = arr[0];
+            var data = arr[1];
+            
+            
+            text += "<b>"+ data.toFixed(2)  + " " + format + "</b> for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+        }
+        else {
+            text += "(no data for " + productNamesToText[countryMatrixProductData[i].name] + ")</br>";
+        }
        
     }
     return text;
@@ -664,10 +686,13 @@ function getTextDataPercentagesAllProducts(countryCode) {
     var text = "";
     for(var i=0; i < countryMatrixProductData.length; i++) {
     
-        var data = calcPercentage(countryMatrixData["years"], countryMatrixProductData[i].minutes)
-        //data = data * 100;
-        
-        text += data.toFixed(4)  + " percentage of your life for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+        if (countryMatrixProductData[i].minutes != 0) {
+            var data = calcPercentage(countryMatrixData["years"], countryMatrixProductData[i].minutes)
+            text += "<b>"+data.toFixed(6)  + " %</b> of your life for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
+        }
+        else {
+            text += "(no data for " + productNamesToText[countryMatrixProductData[i].name] + ")</br>";
+        }
        
     }
     return text;
