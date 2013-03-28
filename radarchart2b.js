@@ -372,7 +372,7 @@ var draw2 = function (countriesAndColors) {
         })
         .on("mousemove", function(d,i) { 
            // $('#tooltip').css("display", "none");
-           // $('#tooltip2').css("display", "inline");
+            $('#tooltip2').css("display", "inline");
             var mousePos = d3.mouse(this);
             tooltip2
                 .style("left", (d3.event.pageX) + "px")     

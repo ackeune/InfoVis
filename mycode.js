@@ -11,11 +11,11 @@ window.selectedProductNames = ["cappuccino", "bread", "jeans", "movie"];
 var productNamesToText = new Array();
 productNamesToText["cappuccino"] = "a cappuccino in a restaurant";
 productNamesToText["bread"] = "a loaf of fresh white bread";
-productNamesToText["jeans"] = "a pair of jeans (Levis 501 or similar)";
+productNamesToText["jeans"] = "a pair of brand jeans (e.g. Levis 501)";
 productNamesToText["movie"] = "a cinema ticket";
 productNamesToText["internet"] = "a month of internet (cable/ADSL)",
 productNamesToText["sneakers"] = "a pair of Nike sneakers";
-productNamesToText["prepaid"] = "1 min. of mobile prepaid",
+productNamesToText["prepaid"] = "1 min of mobile prepaid",
 productNamesToText["mcdonalds"] = "a combo meal at McDonalds";
 
 var countryColors = {};
@@ -791,7 +791,7 @@ function getTextDataPercentagesAllProducts(countryCode) {
         }
         return ["hours", hours];
     }
-    return ["minutes", minutes];
+    return ["min", minutes];
  
  }
  

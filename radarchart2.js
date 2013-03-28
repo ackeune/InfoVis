@@ -406,6 +406,7 @@ var draw = function (countriesAndColors) {
             
         })
         .on("mousemove", function(d,i) { 
+            $('#tooltip').css("display", "inline");
             var mousePos = d3.mouse(this);
             tooltip
                 .style("left", (d3.event.pageX) + "px")     
