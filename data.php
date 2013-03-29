@@ -224,7 +224,7 @@
 
                                         setTimeout(function() {
                                             for(var index in sessvars.codeToName) {
-                                                var active = sessvars.ccValues[index] != absentColor;
+                                                var active = sessvars.ccValues[index] != absentColor && sessvars.ccValues[index] != noWageColor;
                                                 if (active) {
                                                     $('#country').append("<option value=\""+index+"\">"+sessvars.codeToName[index]+"</option>");
                                                 }

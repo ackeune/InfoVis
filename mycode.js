@@ -752,7 +752,7 @@ function getTextDataPercentagesAllProducts(countryCode) {
     
     sessvars.workData2.forEach(function(d) {
         var cc = d["cc"].toLowerCase();
-        var active = sessvars.ccValues[cc] != absentColor;
+        var active = sessvars.ccValues[cc] != absentColor && sessvars.ccValues[cc] != noWageColor;
         if (active) {
            // console.log(sessvars.cmValues[cc]);
            // console.log(newScale(sessvars.cmValues[cc]));
