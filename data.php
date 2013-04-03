@@ -49,12 +49,18 @@
     
    
     <a name="firsttabsection"></a>  
+    <p id="about"><a class="about" href="about.html">About</a></p>
     <div id="header">
-		<img src="images/header.png" alt=""></br>
+        
+		<img src="images/header.png" alt="">
+        
+        </br>
         <p class="info">Compare the number of hours you have to work for a product per country on the minimum wage of that country.</br>
 		See for more information about the product prices <a href="http://www.numbeo.com">this site</a>.</br></p>
+        
+        
     </div>
-	
+	 
 	<div id="belt"></div>
         
 	<div id="wrapper">

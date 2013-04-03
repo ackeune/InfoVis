@@ -361,3 +361,42 @@ a:active {text-decoration:underline;}
 a img {
     border: 0;
 }
+
+#about {
+    text-align: center;
+    float: left;
+    font-family: 'Oxygen', Verdana, Arial, Helvetica, sans-serif; 
+	font-size: 11px;
+	color: #1e1e1e;
+    font-style: bold;
+    
+    padding: 0px;
+	
+    padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	
+    margin-top: 22px;
+	margin-right: 300px;
+	margin-bottom: 0px;
+	margin-left:  465px;
+    
+    clear: both;
+    overflow: auto;
+    position: absolute;
+    
+    background-color: #ffffff;/*rgba(64,64,65,0.8);*/
+    border-radius:  35px;
+    
+    -moz-box-shadow: 1px 2px 3px rgba(255,255,255,.3);
+    -webkit-box-shadow: 1px 2px 3px rgba(255,255,255,.3);
+    box-shadow: 1px 1px 1px rgba(255,255,255,.3);
+}
+
+a.about {
+	color: #1e1e1e;
+    
+}
+
+a.about:link {text-decoration:none;}
