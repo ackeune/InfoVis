@@ -269,11 +269,29 @@ addAxes2 = function () {
 
 	// rotate the text
 	lineAxes.append('svg:text')
-	  .text(String)
-	  .attr("text-anchor", "middle")
-	  .attr("transform", function (d, i) {
-		  //return (i / productNames.length * 360) < 180 ? null : "rotate(180);
-		  return "rotate(90)";
+			.text(String)
+		.attr("text-anchor", "middle")
+		.attr("transform", function (d, i) {
+		console.log("i:");
+		console.log(i / productNames.length * 360);
+		if(i==0)
+			return "rotate(90)";
+		if(i==1)
+			return "rotate(45)";
+		if(i==2)
+			return "rotate(0)";
+		if(i==3)
+			return "rotate(-45)";
+		if(i==4)
+			return "rotate(-90)";
+		if(i==5)
+			return "rotate(-135)";
+		if(i==6)
+			return "rotate(-180)";
+		if(i==7)
+			return "rotate(-225)";
+		  //return (i / productNames.length * 360) < 180 ? null : "rotate(180)";
+		return "rotate(0)";
 	  });
 };
 

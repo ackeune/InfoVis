@@ -198,8 +198,8 @@ addAxes = function () {
 	  .text(String)
 	  .attr("text-anchor", "middle")
 	  .attr("transform", function (d, i) {
-		  //return (i / labels.length * 360) < 180 ? null : "rotate(180);
-		  return "rotate(90)";
+		  return (i / labels.length * 360) < 180 ? null : "rotate(180);
+		  //return "rotate(90)";
 	  });
 };
 
@@ -209,6 +209,7 @@ function angle(i) {
 }
 
 var draw = function (countriesAndColors) {
+	alert('sss');
   var groups,
       lines,
       linesToUpdate;
