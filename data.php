@@ -63,7 +63,9 @@
         </br>
         <p class="info2">Compare the number of hours you have to work for a product per country on the minimum wage of that country.</br>
 		See for more information about the product prices <a href="http://www.numbeo.com">this site</a>.</br></p>
-        <a  href="#lean_overlay" id="aboutlink" class="about">About</a>
+        
+        <a  href="#abouttext" name="abouttext" class="about" rel="leanModal">About</a>
+        <a  href="#usetext" name="usetext" class="about" rel="leanModal">How to use</a>
         
     </div>
 	   <div id="belt"></div>
@@ -73,15 +75,9 @@
 	<div id="wrapper">
         
         <div id="firsttab" >
-        
-                 <div id="lean_overlay">
-                    <p id="aboutheader"> About </p>
-                    <p class="abouttext">
-                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
-                        </br></br>
-                        Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia.
-                    </p>
-                </div>
+                
+                
+                
     
                 <p class="info">Click on a product icon below the map too see the workload with that product added. </br> Select countries first to compare them individually.</p>
 
@@ -318,7 +314,9 @@
                                         
                                         $('#secondtab').css("display", "none"); 
                                         
-                                        $("#aboutlink").leanModal();
+                                        //$("#aboutlink").leanModal();
+                                        $('a[rel*=leanModal]').leanModal({ closeButton: ".modal_close" });
+
 
                                     
                                 });
@@ -339,27 +337,137 @@
             <!-- <p> 
                 You selected from the map: 
             </p> -->
-            <div id="resultingcountries"></div>
-            <div id="viz">
-                <div id="legend"></div>
-                <div id="spiderinfoblock">
-                    <div class="spiderinfo">Absolute work load</div>
-                    <div class="spiderinfo">Work load relative to life expectancy</div>
-                </div>
-                <div class="spider" id="spiderchart"></div>                
-                <div class="spider" id="spiderchart2"></div>
-                <div id="backtotop">
-                    <a href="#firsttabsection"><img id="backbutton" src="images/icons/back-to-top.png" width="50px" height="50px" alt="Back to top"></src></a>
-                </div>
+        <div id="resultingcountries"></div>
+        <div id="viz">
+            <div id="legend"></div>
+            <div id="spiderinfoblock">
+                <div class="spiderinfo">Absolute work load</div>
+                <div class="spiderinfo">Work load relative to life expectancy</div>
+            </div>
+            <div class="spider" id="spiderchart"></div>                
+            <div class="spider" id="spiderchart2"></div>
+            <div id="backtotop">
+                <a href="#firsttabsection"><img id="backbutton" src="images/icons/back-to-top.png" width="50px" height="50px" alt="Back to top"></src></a>
+            </div>
+        </div>
+        
+
+    </div> <!-- id = secondttab -->
+<a name="secondtabsection"></a>  
+</div> <!-- id = wrapper -->
+
+
+<div  id="usetext">
+                <p class="aboutheader" style="font-size: 13px;"> How to use  <i> Trade your Life </i> ? </p>
+               
+                    
+                     <a class="modal_close" href="#"></a>
+                     
+                     <p class="aboutheader"> What it shows </p>
+                    <p class="abouttext">
+                     We show how much to work on minimum wage for certain products. </br>
+                     For example, how much do you have to work in Mali on minimum wage to buy a cappuccino, or a pair of jeans? And how does this differ from the situation in Libya and the USA? And how much is "much" actually, considering your life expectancy in those countries?
+                     </p>
+                     
+                      <p class="aboutheader"> Map view </p>
+                    <p class="abouttext">
+                     By (de)selecting the product icons below the map, you can get an overview on the map of the global workload 
+                     for the selected products. The upper right bar chart shows the numbers corresponding to the colors in the map.<br><br>
+                     
+                     You can also hover over countries for detailed info per selected product.</br></br>
+                     You can also select countries by clicking on them. 
+                     Why is that? Read on...
+                     
+                     </p>
+                     <p class="aboutheader"> Compare countries  </p>
+                     <p class="abouttext">
+                     Given the map view, you might  want to compare some countries more detailed. </br>
+                     You can select up to 10 countries by clicking on the map or by using select list besides the map.<br>
+                     Then by clicking on the yellow "Compare countries"
+                     button, you will get a specificic comparison of the countries in terms of work load.</br></br>
+                     
+                     The first radial chart shows the absolute working hours. The second radial chart shows the percentage of life needed to work. (To see that these are not always the same, compare for example Iran and The Netherlands!)
+                    </p>
+                    
+                
             </div>
             
+             <div id="abouttext">
+                   <p class="aboutheader" style="font-size: 13px;"> What is <i> Trade your Life </i> ? </p>
+                    <a class="modal_close" href="#"></a>
+               
+                
+                    
+                    <p class="aboutheader"> Goal </p>
+                    
+                     <p class="abouttext">
+                    The goal of this information visualization project is to raise public awareness to global economic inequality from a different angle by connecting each country's minimum wage with the cost of a set of basic consumer goods and translate that connection in terms of working hours.</br>
+                    This way we aim to show the (relative) "<i>slaving away</i>" amount around the world concretely.</br>
+                    
+                    This approach is more
+                    tangible and personal than standard indicators such as the 
+                    <a class="inabout" href="http://en.wikipedia.org/wiki/List_of_countries_by_GDP_(PPP)_per_capita" TARGET="_blank"> 
+                        GDP per capita
+                    </a>
+                    or the
+                    <a class="inabout" href="http://en.wikipedia.org/wiki/Gini_coefficient" TARGET="_blank"> 
+                        Gini coefficient
+                    </a>. 
+                    </p>
+                    
+                    <p class="aboutheader"> Methodolody </p>
+                    
+                     <p class="abouttext">
+                    In order to make a global comparison possible, the assumption for the working
+                    hours calculation was based on a working day of 8 hours and a a working week of 5 days.
+                    This results in an average of 20 working days in a month. 
+                    This allows for a comparison between
+                    distinct situations in equal terms.</br>
+                    The cost of the consumer goods selected for the application is originally crowd
+                    sourced and gathered in a platform named 
+                    Numbeo
+                     (see <b>Datasets</b> below for further
+                    information). Note that "outlier" countries in terms of product cost from Numbeo (.e.g. Burundi) were deliberately included. </br>
+                    The choice for minimum wage (as opposed to e.g. average wage) as wage metric is made because of standardization and availability. Still, information on the percentage of the population in
+                    each country earning the minimum wage is unavailable, so note that the figures presented do not take this into account. </br>
+                    </p>
+                    
+                    <p class="aboutheader">  Datasets </p>
+                     <p class="abouttext">
+                    All data included in this application were captured on March 2013 from the following
+                    sources: 
+                    <ul STYLE="font-size: 10px;">
+                        <li> Wikipedia (<a class="inabout" href="http://en.wikipedia.org/wiki/List_of_minimum_wages_by_country">minimum wage per country</a>) </li>
+                        <li> CIA (<a class="inabout" href="https://www.cia.gov/library/publications/the-world-factbook/rankorder/2102rank.html"> life expectancy per country</a>) </li> 
+                        <li>Numbeo (cost of products in USD, per country):
+                        
+                            
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=9"  TARGET="_blank" >loaf of bread</a>; 
+                                
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=3"  TARGET="_blank" > McDonalds meal</a>; 
+                                
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=114"   TARGET="_blank"> cappuccino </a>; 
+                                 
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=60"  TARGET="_blank" > pair of brand jeans </a>; 
+                                
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=64"  TARGET="_blank"> brand sneakers </a>; 
+                               
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=32"  TARGET="_blank"> pre-paid mobile </a>; 
+                                
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=33"  TARGET="_blank"> monthly internet package </a>;
+                                
+                                    <a class="inabout" href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=USD&itemId=44"  TARGET="_blank"> movie ticket  </a>
+                                
+                       </li>
+                    </ul> 
+                    
+                    </p>
+                    <p class="aboutheader"> Your workers </p>
+                    <p class="abouttext">
+                     The (<a class="inabout" href="http://www.uva.nl/en/home" TARGET="_blank">UvA</a> and <a  class="inabout" href="http://www.mahku.nl/" TARGET="_blank">maHKU</a> based) <a class="inabout" href="http://showmethedata.nl/2012/" TARGET="_blank">InfoVis 2012/2013</a> team of:  Agnes, Ana, Anna and Buffy
+                    </p>
+            </div>
 
-        </div> <!-- id = secondttab -->
-    <a name="secondtabsection"></a>  
-    </div> <!-- id = wrapper -->
-    
-   
-    
     
     </body>
 </html>     
