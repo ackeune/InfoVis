@@ -437,8 +437,8 @@
                     All data included in this application were captured on March 2013 from the following
                     sources: 
                     <ul STYLE="font-size: 10px;">
-                        <li> Wikipedia (<a class="inabout" href="http://en.wikipedia.org/wiki/List_of_minimum_wages_by_country">minimum wage per country</a>) </li>
-                        <li> CIA (<a class="inabout" href="https://www.cia.gov/library/publications/the-world-factbook/rankorder/2102rank.html"> life expectancy per country</a>) </li> 
+                        <li> Wikipedia (<a class="inabout" href="http://en.wikipedia.org/wiki/List_of_minimum_wages_by_country" TARGET="_blank" >minimum wage per country</a>) </li>
+                        <li> CIA (<a class="inabout" href="https://www.cia.gov/library/publications/the-world-factbook/rankorder/2102rank.html" TARGET="_blank"> life expectancy per country</a>) </li> 
                         <li>Numbeo (cost of products in USD, per country):
                         
                             
