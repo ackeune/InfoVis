@@ -34,7 +34,6 @@ var loadViz2 = function(){
 };
 
 var makeSpiderChart2 = function(countriesAndColors){
-	console.log("IN RADAR2");
 	getDataCountries2(countriesAndColors);
 	buildBase2();
 	setScales2();
@@ -53,7 +52,6 @@ function getDataCountries2(countriesAndColors) {
 		countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
 		
 		countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(productNames, prod.name); });
-		console.log(countryMatrixProductData);
 		for(var j=0; j < productNames.length; j++){
 			dataCountries2[i][j] = countryMatrixProductData[j].percentage * 100;
 		}
@@ -67,14 +65,11 @@ function getDataCountries2(countriesAndColors) {
 	}
 	
 	
-	 //to complete the radial lines
+    //to complete the radial lines
     for (var i = 0; i < dataCountries2.length; i += 1) {
         dataCountries2[i].push(dataCountries2[i][0]);
     }
 	
-	console.log("productValues");
-	console.log(productValues);
-	//console.log(dataCountries2);
 	minValues2 = new Array();
 	maxValues2 = new Array();
     maxMin=-1;
@@ -89,12 +84,6 @@ function getDataCountries2(countriesAndColors) {
 	}
 	minVal2 = d3.min(minValues2);
 	maxVal2 = d3.max(maxValues2);
-	console.log("minVal2");
-	console.log(minVal2);
-	console.log("maxVal2");
-	console.log(maxVal2);
-    console.log(minValues2);
-    console.log(maxValues2);
  }
 
 var buildBase2 = function(){
@@ -134,10 +123,6 @@ setScales2 = function () {
              var rescale = d3.scale.linear()
                              .domain([minValues2[i], maxValues2[i]])
                              .range([minVal0, maxVal0]);//.nice();
-                            
-			 // return d3.scale.linear()
-				 // .domain([minValues2[i], maxValues2[i]])
-				 // .range([margin2, r]);//.nice();
              return d3.scale.linear()
 				  .domain([rescale(minVal0), rescale(maxVal0)])
 				  .range([margin2, r2]);//.nice();
@@ -146,23 +131,7 @@ setScales2 = function () {
                             
 			return d3.svg.axis().scale(scales2[i]).orient("left")
 				.ticks(5);
-		});	  
-	 
-     
-     // radia2 = [];
-     // for (var i=0; i < 8; i++) {
-         // radia2.push( function() { return d3.scale.linear()
-            // .domain([minValues2[i], maxValues2[i]])
-            // .range([0, (circleConstraint / 2)]); });      
-	// }
-   
-    
-    // for (var i=0; i < 8; i++) {
-        // console.log(minValues2[i]);
-        // console.log(scales2[i](minValues2[i]));
-        // console.log(maxValues2[i]);
-        // console.log(scales2[i](maxValues2[i]));
-    // }
+		});	  	 
 	  
 	//need a circle so find constraining dimension
 	heightCircleConstraint = h2 - vizPadding2.top - vizPadding2.bottom;
@@ -175,25 +144,11 @@ setScales2 = function () {
 	radiusLength2 = radius2(maxVal2);
     
     radia2 = $.map(productNames, function(m, i) {
-            console.log(i);
-            //console.log([minValues2[i], maxValues2[i]]);
-            //console.log((circleConstraint / 2));
-			return (
+            return (
                 d3.scale.linear()
                    .domain([minValues2[i], maxValues2[i]])
                    .range([0, (circleConstraint / 2)]));
                });         
-		
-      console.log(radia2);  
-      
-      
-	/*
-	scales2 = $.map(productNames, function(l, i) {
-		return d3.scale.linear()
-		.domain([minValues2[i], maxValues2[i]])
-		.range([margin2, r2]).nice();
-	})
-	*/
 
 	//attach everything to the group that is centered around middle
 	centerXPos = widthCircleConstraint / 2 + vizPadding2.left;
@@ -209,9 +164,7 @@ addAxes2 = function () {
       circleAxes,
       lineAxes;
 	  
-        console.log("dataCountries2");
-        console.log(dataCountries2);
-      vizBody.selectAll('.circle-ticks').remove();
+	  vizBody.selectAll('.circle-ticks').remove();
       vizBody.selectAll('.line-ticks').remove();
 
   circleAxes = vizBody.selectAll('.circle-ticks')
@@ -227,18 +180,6 @@ addAxes2 = function () {
       .attr("class", "circle")
       .style("stroke", ruleColor2)
       .style("fill", "none");
-		/*
-	  circleAxes.append("svg:text")
-		  .attr("text-anchor", "middle")
-		  .attr("dy", function (d) {
-			  return -1 * radius2(d);
-		  })
-		  //.attr("class", "shadow")
-		  .text(String);
-		*/
-		  
-	
-    
                             
 	lineAxes = vizBody.selectAll('.line-ticks')
 		.data(productNames)
@@ -254,12 +195,9 @@ addAxes2 = function () {
                             .domain([minValues2[i], maxValues2[i]])
                             .range([minVal0, maxVal0]);//.nice();
                             
-            
-                    
 			return "rotate(" + ((i / productNames.length * 360) - 90) + // (angle(i)*180/Math.PI)
 			  ")translate(" + radius2(rescale(maxValues2[i])) + ")translate(10,0)";
             })
-	  //.attr("class", "back")
 	  .attr("class", "line-ticks");
 
 	lineAxes.append('svg:line')
@@ -268,12 +206,11 @@ addAxes2 = function () {
 		.style("fill", "none");
 
 	// rotate the text
+	// hardcoded way to put the 8 labels straight
 	lineAxes.append('svg:text')
 			.text(String)
 		.attr("text-anchor", "middle")
 		.attr("transform", function (d, i) {
-		console.log("i:");
-		console.log(i / productNames.length * 360);
 		if(i==0)
 			return "rotate(90)";
 		if(i==1)
@@ -290,7 +227,6 @@ addAxes2 = function () {
 			return "rotate(-180)";
 		if(i==7)
 			return "rotate(-225)";
-		  //return (i / productNames.length * 360) < 180 ? null : "rotate(180)";
 		return "rotate(0)";
 	  });
 };
@@ -301,23 +237,16 @@ function angle(i) {
 }
 
 var draw2 = function (countriesAndColors) {
-    console.log("IN DRAW2")
   var groups,
       lines,
       linesToUpdate;
-        console.log("data in draw");
-        console.log(dataCountries2);
       highlightedDotSize = 4;
 
      /////////////// herschalen
      for (var i =0; i < countriesAndColors.length; i++) {
-        console.log(i);
         dataCountries2b[i] = new Array(productNames.length);        
         
-        for(var j=0; j < productNames.length; j++) { // producten
-            console.log([minValues2[j], maxValues2[j]]);
-            console.log([minVal2, maxVal2]);
-            
+        for(var j=0; j < productNames.length; j++) { // producten            
             var minVal0 = minValues2[highestProduct2];
             var rescaleMin = minVal0 / minValues2[j];
             var maxVal0 = maxValues2[highestProduct2];
@@ -327,7 +256,6 @@ var draw2 = function (countriesAndColors) {
                             .domain([minValues2[j], maxValues2[j]])
                             .range([minVal0, maxVal0]);//.nice();
                             
-            console.log(j);
             dataCountries2b[i][j] =  rescale(dataCountries2[i][j]);
         }
      }
@@ -367,14 +295,8 @@ var draw2 = function (countriesAndColors) {
       .attr('fill-opacity', 0.3)
       .attr("z-index",(10+i))
       .on("mouseover", function(d,i) { 
+
             var mousePos = d3.mouse(this);
-            console.log(this);
-           
-            console.log(mousePos);
-            
-           // tooltip.attr("visibility", "visible");
-           // tooltip.attr({transform: 'translate(' + mousePos + ')'});
-          
              $('#tooltip').css("display", "none");
              $('#tooltip2').css("display", "inline");
             tooltip2.html(
@@ -389,7 +311,6 @@ var draw2 = function (countriesAndColors) {
             
         })
         .on("mousemove", function(d,i) { 
-           // $('#tooltip').css("display", "none");
             $('#tooltip2').css("display", "inline");
             var mousePos = d3.mouse(this);
             tooltip2
@@ -405,39 +326,11 @@ var draw2 = function (countriesAndColors) {
                 .style("opacity", 0)
                 .attr("display","none");
                 
-          //  $('#tooltip2').css("display", "none");
-            
         });
-	
-    
-  
-    
+	    
 	 ctr = vizBody.append("svg:g");
                 
-      // $.each(axes, function(i, a) {
-			// $.each([true, false], function(j, v) {
-                // console.log("j: " + j);
-                // console.log("v:" + v);
-				// ctr.append("g")
-					// .attr("transform",
-						// "rotate(" + -(angle(i)*180/Math.PI) + ")")
-                    // .attr("class", "xaxis2")
-					// .call(a)
-                        // .selectAll("text")
-                        // .attr("text-anchor", "middle")
-                        // .attr("class", v ? "back" : "")
-                        // .attr("transform", function(d) {
-                            // var x = d3.select(this).attr("x"),
-                                // y = d3.select(this).attr("y");
-                            // return "rotate(" + (angle(i)*180/Math.PI) + " " + 
-                                    // x + " " + y + ")";
-                       // });
-			// });
-		// });	
-	
-  
- // groups.exit().remove();
-	
+    
   lines = groups.append('svg:path')
       .attr("class", "line")
       .attr("d", d3.svg.line.radial()
@@ -454,8 +347,6 @@ var draw2 = function (countriesAndColors) {
 
   groups.selectAll(".curr-point")
       .data(function (d) {
-            console.log("d[0]:");
-            console.log(d[0]);
           return [d[0]];
       })
       .enter().append("svg:circle")
@@ -470,10 +361,7 @@ var draw2 = function (countriesAndColors) {
       .attr('r', 0)
       .style("z-index", "0")
       .attr("class", "clicked-point");
-
-      console.log("radia2");
-      console.log(radia2);
-      
+  
   lines.attr("d", d3.svg.line.radial()
     
       .radius(function (d,i) {

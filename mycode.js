@@ -63,8 +63,6 @@ function loadD3Data() {
 
     setTimeout(function() {
         if (true || !sessvars.workData2 || !sessvars.codeToName) { // niet elke keer inlezen bij POST refresh
-            console.log("in D3");
-
             sessvars.workData2 = [];
             sessvars.codeToName = {};
 
@@ -89,25 +87,12 @@ function loadD3Data() {
                     obj2["products"].push( new Product ("mcdonalds", d["McDonalds meal USD"]));
                     sessvars.workData2.push(obj2);
                     sessvars.codeToName[d["CC"].toLowerCase()] = d["COUNTRY"];
-                    // hier ergens synoniemen van codes verwerken
-                    
-                    // de html selector stuff
-                    //$('#country').append("<option value=\"" + d["CC"] + "\">" + d["COUNTRY"] + "</option>");
-                   // console.log( d["CC"]);
-                    
-                    //console.log(sessvars.codeToName[d["CC"].toLowerCase()]);
                 });
                 fillMatrixMinutes();
-                noProductsNoWage();
-                
-                console.log("workData2 in d3:");
-                console.log(sessvars.workData2);
-                console.log(sessvars.codeToName);
-                
+                noProductsNoWage();              
                 window.dataRead = true;
             });            
         }
-        console.log(sessvars.codeToName['gf']);
         deferred.resolve();
     }, 100);
     
@@ -143,7 +128,6 @@ function noProductsNoWage() {
     for (var i = 0; i < sessvars.workData2.length; i++) {
        var maxProduct =  _.max(sessvars.workData2[i]["products"], function(prod){if(isNumber(prod.cost)) {return prod.cost;} else {return 0;}});
        var maxPrice = maxProduct.cost;
-       console.log("maxPrice:",maxPrice);
        if (!isNumber(maxPrice) || maxPrice == 0) { // no data for any product
             sessvars.workData2[i]["wage per minute"] = "-"; // act like doesnt have min. wage so it gets out of the map
        }
@@ -197,10 +181,8 @@ function removeStroke(code) {
 
 // aangeroepen als je op land in map klikt
 function putStroke(code, region) {
-    // alert('**' + code);
     var countries = sessvars.countries;
-    console.log(code);
-    
+
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
     var active = isNumber(countryMatrixData['wage per minute']);
     //sessvars.ccValues[code] != absentColor;
@@ -229,15 +211,9 @@ function putStroke(code, region) {
 function selectCountry(cc) {    
     var countries = sessvars.countries;
 
-    console.log(cc.value.toLowerCase());
     ccV = cc.value.toLowerCase();
 
-    //var countries = $('#my_jqvmap').data('mapObject').countries;
-   
     if (!(_.some(countriesAndColors, function(el) {return el.code === ccV;}))){
-        //console.log(ccV + " kwam nog niet voor");
-        
-        
         var newColor = outlineColorsCountries.pop();
         if (window.SVGAngle) {
             countries[ccV].setAttribute("stroke", newColor);
@@ -251,7 +227,6 @@ function selectCountry(cc) {
         countriesAndColors.push({code: ccV, color: newColor});
         
         var option = cc.options[cc.selectedIndex];
-        console.log(option);
 
         var ul = document.getElementsByTagName('ul')[0];
 
@@ -271,8 +246,6 @@ function selectCountry(cc) {
         li.setAttribute('id', 'li_' + ccV);        
         li.setAttribute('onclick', 'deselectCountry(\"' + input.value + '\");');
         
-        
-        //ul.appendChild(li);
         $('#location-selected').append(li);
         
         count++;
@@ -309,10 +282,6 @@ function deselectCountry(cc) {
 
 // check of genoeg landen geselecteerd zijn
 function checkButton(code) {
-    console.log(count);
-    
-    console.log("countriesAndColors:");
-    console.log(countriesAndColors);
     if (count > 0) {
         document.getElementById("submitbutton").disabled = false;
         
@@ -341,16 +310,11 @@ function getCountryColorValues(selectedProducts) {
             var minutes = {};
             var colors = {};
             var absentMinutes = -1;
-            
-
             var maxMinutesC;
             maxMinutes = 0;
             var minMinutesC;
             minMinutes = 999999999;
-            
-            //console.log("selectedProducts:");
-            //console.log(selectedProducts);
-            
+       
             sessvars.workData2.forEach(function(d) {
             
                 var totalMinutes;
@@ -362,19 +326,15 @@ function getCountryColorValues(selectedProducts) {
                     var hasAll = productsWithCost.length == selectedProducts.length;
 
                     if (hasAll) {
-                        //console.log("hasAll");
                         totalMinutes = _.reduce(d["products"], function(memo, prod) {
                             if (_.contains(selectedProducts, prod.name)) {
-                                //console.log("selectedProducts contains " + prod.name + " it has " + prod.minutes + " minutes");
                                 return memo + prod.minutes;
                             }
                             else {
-                                //console.log("selectedProducts not contains " + prod.name );
                                 return memo;
                             }
                         }, 0);
                         
-                       // console.log("totalMinutes: " + totalMinutes);
                         minutes[ d["cc"].toLowerCase()] = totalMinutes;
 
                         if (totalMinutes > maxMinutes) {
@@ -391,10 +351,6 @@ function getCountryColorValues(selectedProducts) {
                 }
             });
 
-            console.log("minutes:");
-            console.log(maxMinutes);
-            console.log(minMinutes);
-            
             colorFun.domain([minMinutes, maxMinutes]);
             
             sessvars.workData2.forEach(function(d) {
@@ -412,18 +368,10 @@ function getCountryColorValues(selectedProducts) {
             });
             sessvars.ccValues = colors;
             sessvars.cmValues = minutes;
-            console.log("sessvars.ccValues in getcolors:");
-            console.log(sessvars.ccValues );
-            
-                       
         }
         deferred.resolve();
     }, 1000);
 }
-
-
-
-
     
 function getCountryColorValues_noTimeOut(selectedProducts) {
     
@@ -438,9 +386,6 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
         var minMinutesC;
         minMinutes = 999999999;
         
-        //console.log("selectedProducts:");
-        //console.log(selectedProducts);
-        
         sessvars.workData2.forEach(function(d) {
             
             var totalMinutes;
@@ -454,19 +399,15 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
                     var hasAll = productsWithCost.length == selectedProducts.length;
 
                     if (hasAll) {
-                        //console.log("hasAll");
                         totalMinutes = _.reduce(d["products"], function(memo, prod) {
                             if (_.contains(selectedProducts, prod.name)) {
-                                //console.log("selectedProducts contains " + prod.name + " it has " + prod.minutes + " minutes");
                                 return memo + prod.minutes;
                             }
                             else {
-                                //console.log("selectedProducts not contains " + prod.name );
                                 return memo;
                             }
                         }, 0);
                         
-                       // console.log("totalMinutes: " + totalMinutes);
                         minutes[ d["cc"].toLowerCase()] = totalMinutes;
 
                         if (totalMinutes > maxMinutes) {
@@ -488,10 +429,6 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
             }
         });
         
-
-        console.log(maxMinutes);
-        console.log(minMinutes);
-        
         colorFun.domain([minMinutes, maxMinutes]);
         
         sessvars.workData2.forEach(function(d) {
@@ -508,13 +445,7 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
             }
         });
         sessvars.cmValues = minutes;
-        sessvars.ccValues = colors;
-        console.log("sessvars.ccValues in getcolors:");
-        console.log(sessvars.ccValues );
-        
-        //$('#my_jqvmap').vectorMap('set', 'values', sessvars.ccValues);
-        
-                   
+        sessvars.ccValues = colors;                
     }
 }
 
@@ -523,16 +454,10 @@ var colorFun = d3.scale.log().base(4.1).nice()
     
 
 function colorTest() {
-    // alert("colortest");
-    //console.log(countryColors['af']);
-    //var kleurtjes = getColorsSampleData();
-    // $('#my_jqvmap').vectorMap('set', 'colors', countryColors );
     $('#my_jqvmap').vectorMap('set', 'colors', {
         us : '#8EE5EE',
         af : "#8e0505"
     });
-    //$('#my_jqvmap').vectorMap('set', 'colors', kleurtjes );
-
 }
 
 
@@ -543,12 +468,7 @@ function bla() {
 
 
 function submitCountries() {    
-    
-    console.log(countriesAndColors);
-    // document.getElementById("resultingcountries").innerHTML = "";
-    // for(var i=0; i < countriesAndColors.length; i++) { 
-        // document.getElementById("resultingcountries").innerHTML += "<b> country " + i + ": </b> " +  sessvars.codeToName[countriesAndColors[i].code] + " </br>";
-    // }
+
     if (count > 0) {
         document.getElementById("spiderchart").innerHTML = "";
         document.getElementById("spiderchart2").innerHTML = "";
@@ -572,45 +492,13 @@ function submitCountries() {
          img.src = 'images/icons/' + img.id + '-seleted.png';
          selectedProductNames.push(img.id) ;
     }
-     console.log(selectedProductNames);
-     
      //getCountryColorValues(selectedProductNames);
     getCountryColorValues_noTimeOut(selectedProductNames);
     
     
     $('#my_jqvmap').vectorMap('set', 'colors', sessvars.ccValues);
     
-    // for(var index in sessvars.codeToName) {
-        // $('select option[value=\"'+ index + '\"]').remove(); 
-    // }
-    // for(var index in sessvars.codeToName) {
-        // var active = sessvars.ccValues[index] != absentColor;
-        // if (active) {
-            // $('select').append("<option value=\""+index+"\">"+sessvars.codeToName[index]+"</option>");
-        // }
-        // else {
-            // $('select').append('<option value=\"'+index+'\" disabled>'+sessvars.codeToName[index]+'</option>');
-            // //console.log(index);
-            
-            
-            // // if (_.some(countriesAndColors, function(el) {return el.code === index;})) {
-                // // console.log(index);
-                // // removeStroke(index);
-            // // }
-        // }
-    // }
-    // $('select').trigger('liszt:updated');
- 
 
-   
-   //$('.chzn-select').val(2);
-   
-    //$('#country_chzn').remove();
-   // $(".chzn-select").chosen();
-    //$("#country").chosen().change( function() {alert("this is an alert"); });
-
-    
-    
     barChart() ;
     
  }  
@@ -619,7 +507,6 @@ function getTotalTextData(countryCode) {
     countryCode = countryCode.toUpperCase();
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
     countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(selectedProductNames, prod.name); });
-    //console.log(countryMatrixProductData);
     var text = "";
     var sum = 0;
     for(var i=0; i < countryMatrixProductData.length; i++) {
@@ -637,7 +524,6 @@ function getTotalTextData(countryCode) {
     countryCode = countryCode.toUpperCase();
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
     countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(selectedProductNames, prod.name); });
-    //console.log(countryMatrixProductData);
     var text = "";
     for(var i=0; i < countryMatrixProductData.length; i++) {
     
@@ -656,7 +542,6 @@ function getTotalTextData(countryCode) {
     countryCode = countryCode.toUpperCase();
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
     countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(productNames, prod.name); });
-    //console.log(countryMatrixProductData);
     var text = "";
     for(var i=0; i < countryMatrixProductData.length; i++) {
         
@@ -681,7 +566,6 @@ function getTextDataPercentagesAllProducts(countryCode) {
     countryCode = countryCode.toUpperCase();
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
     countryMatrixProductData = _.filter(countryMatrixData.products, function (prod) { return _.contains(productNames, prod.name); });
-    //console.log(countryMatrixProductData);
     var text = "";
     for(var i=0; i < countryMatrixProductData.length; i++) {
     
@@ -709,9 +593,7 @@ function getTextDataPercentagesAllProducts(countryCode) {
  }
  
  function calcPercentage(totalYears, minutesWork) {
-    //console.log("totalYears:"+ totalYears);
     var totalMinutesAlive = yearsToMinutes(totalYears);
-    //console.log("totalMinutesAlive:"+ totalMinutesAlive);
     var percentageWorking = (100 / totalMinutesAlive) * minutesWork;
     return percentageWorking;
 }
@@ -719,61 +601,35 @@ function getTextDataPercentagesAllProducts(countryCode) {
  function calcBarChartData() {
     
     var interval = maxMinutes - minMinutes;
-   
-    
-   // var newScale = colorFun.copy();
-   // newScale.range([0,1]);
-    
     var newScale2 = colorFun.copy();
     newScale2.range([minMinutes,maxMinutes]);
     
     var barInterval = interval / nrBars;
-    //var nrCountriesPerBar = new Array(nrBars);
     var nrCountriesPerBarRescaled = new Array(nrBars);
     var intervalNrPerBar = new Array(nrBars);
     var intervalNrPerBarReturned = new Array(nrBars);
-    //var intervalNrPerBar2 = new Array(nrBars);
-    
     var intervalNumbers = new Array(nrBars);
     
     for (var i=0; i < nrBars; i++) {
         intervalNrPerBar[i] = barInterval * (i);
-        //intervalNrPerBar2[i] = 0.25 * (i);
        intervalNrPerBarReturned[i] = barInterval * (i+1);
-       // nrCountriesPerBar[i] = 0;
         nrCountriesPerBarRescaled[i] = 0;
         
     }
-   // console.log(interval);
-    console.log(intervalNrPerBar);
-   // console.log(intervalNrPerBar2);
-     
     
     sessvars.workData2.forEach(function(d) {
         var cc = d["cc"].toLowerCase();
         var active = sessvars.ccValues[cc] != absentColor && sessvars.ccValues[cc] != noWageColor;
         if (active) {
-           // console.log(sessvars.cmValues[cc]);
-           // console.log(newScale(sessvars.cmValues[cc]));
             for (var i = nrBars-1; i >= 0; i--) {
-               
-                //if (newScale(sessvars.cmValues[cc]) > intervalNrPerBar2[i]) {
-                //    nrCountriesPerBar[i]++;
-                //}
                 if ((sessvars.cmValues[cc]) > intervalNrPerBar[i]) {
                     nrCountriesPerBarRescaled[i]++;
                     i=0;
                 }
             }
         }
-    });
-    //console.log("nrCountriesPerBar:");
-   // console.log(nrCountriesPerBar);
-    console.log("nrCountriesPerBarR:");
-    console.log(nrCountriesPerBarRescaled);
-    
+    });    
     return [nrCountriesPerBarRescaled, intervalNrPerBarReturned]
- 
  }
  
  function rescaleMinutes (minutes) {
@@ -836,17 +692,6 @@ function barChartOnce() {
     nrCountriesPerBarRescaled = chartDataArray[0];
     intervalNrPerBar = chartDataArray[1];
     
-    console.log(d3.max(nrCountriesPerBarRescaled));
-    
-    
-    console.log(nrCountriesPerBarRescaled);
-    // var data = d3.range(10).map(Math.random);
-    // var data = [23, 85, 67, 38, 70, 30, 80, 18 ];
-    // var colorlist = ["maroon", "darkblue"];
-    // var labellist = ["0-10", "", "10-20", "", "30-40", "", "50-60", ""];
-  
-    //$('#bars').remove();
-    
     var w = 245,
         h = 110;
     var topmargin = 10;
@@ -867,13 +712,10 @@ function barChartOnce() {
         .attr("id", "bars")
          .attr("width", w )
          .attr("height", h + 30);
-           // .append("svg:g")
-           // .attr("transform", "translate(20,0)");
-
+    
    var formatSi = d3.format(".1s");
     var xAxis = d3.svg.axis()
             .scale(xFun)
-            //.ticks(5)
             .ticks(5,function(d, i) {
                 return formatSi(d) ;
             })
@@ -887,9 +729,6 @@ function barChartOnce() {
     var endColor="#000000";
     
     var gradients = Array(4);
-    //setGradient( gradients, chart,1,startY,endY,startColor,endColor);
-    //var gradient1 = gradients[1];
-    //console.log(gradient1);
     
     colorFun2 = d3.scale.linear().range(["#f3f3f3", "#1e1e1e"]);
     
@@ -898,12 +737,11 @@ function barChartOnce() {
         enter().
         append("rect")
         .attr("x", function(datum, index) { return leftmargin; })
-         .attr("y", function(datum, index) { console.log("index: " +  (index)); return yFun(index); })
+         .attr("y", function(datum, index) { return yFun(index); })
         .attr("fill", function(d, i) { return "#ac26d9"; } )    
          .transition().duration(600)
         .attr("width", function(datum, index) {   if(formatNoDecimals(datum) == 0) return 0; else return xFun(datum); })
         .attr("height", function(datum, index) { return barHeight; })
-        //.style("stroke","#2b929b")
          .attr("fill", function(datum, index) { 
                                             if (index == 0) {
                                                 startColor = colorFun(0);
@@ -928,36 +766,22 @@ function barChartOnce() {
                 text( function(datum) { var arr = rescaleMinutes(datum); return "Up to " + formatNoDecimals(arr[1]) + " " + arr[0]; } )
                     .attr("class", "yaxistext");
      
-     
-   //   xAxis.tickFormat(function (d) { return ''; })
-      
      chart.append("g")
       .attr("class", "xaxis")
       .attr("transform", "translate("+leftmargin+"," + (h+20) + ")")
-      //.attr("width", 180)
       .call(xAxis)    
           
           .selectAll("text")                  
                 .style("text-anchor", "begin")
-                //.attr("dx", "3em")
                 .attr("dy", -13) ; // why...??
-                //.attr("transform", function(d) {
-                //        return "translate(0,7),rotate(-80)";
-                //    });
-            
-   
    
      chart.append("text").              
               attr("x", leftmargin-10).
               attr("y", h+20).
               attr("dy", -5) .
               attr("class","xaxis").
-             // attr("dx", -barWidth/2).
               attr("text-anchor", "end").
-              //attr("style", "font-size: 9; font-family: 'Oxygen', sans-serif").
               text("Nr. of countries");
-            //  attr("fill","white");     
-
 }
 
 
@@ -967,18 +791,7 @@ function barChartOnce() {
     chartDataArray = calcBarChartData();
     nrCountriesPerBarRescaled = chartDataArray[0];
     intervalNrPerBar = chartDataArray[1];
-    
-    console.log(d3.max(nrCountriesPerBarRescaled));
-    
-    
-    console.log(nrCountriesPerBarRescaled);
-    // var data = d3.range(10).map(Math.random);
-    // var data = [23, 85, 67, 38, 70, 30, 80, 18 ];
-    // var colorlist = ["maroon", "darkblue"];
-    // var labellist = ["0-10", "", "10-20", "", "30-40", "", "50-60", ""];
-  
-    //$('#bars').remove();
-    
+        
     var w = 245,
         h = 110;
     var topmargin = 10;
@@ -995,17 +808,10 @@ function barChartOnce() {
         .rangeBands([topmargin, h+topmargin], .2);
 
     var chart = d3.select("#rectangles").select("#bars");
-        // .append("svg")
-        // .attr("id", "bars")
-         // .attr("width", w )
-         // .attr("height", h + 30);
-           // .append("svg:g")
-           // .attr("transform", "translate(20,0)");
-
-   var formatSi = d3.format(".1s");
+    
+    var formatSi = d3.format(".1s");
     var xAxis = d3.svg.axis()
             .scale(xFun)
-            //.ticks(5)
             .ticks(5,function(d, i) {
                 return formatSi(d) ;
             })
@@ -1019,18 +825,13 @@ function barChartOnce() {
     var endColor="#000000";
     
     var gradients = Array(4);
-    //setGradient( gradients, chart,1,startY,endY,startColor,endColor);
-    //var gradient1 = gradients[1];
-    //console.log(gradient1);
     
     colorFun2 = d3.scale.linear().range(["#f3f3f3", "#1e1e1e"]);
     
     var rects = chart.selectAll("rect").
         data(nrCountriesPerBarRescaled)
-        //.enter()
-       // .append("rect")
         .attr("x", function(datum, index) { return leftmargin; })
-         .attr("y", function(datum, index) { console.log("index: " +  (index)); return yFun(index); })
+        .attr("y", function(datum, index) { return yFun(index); })
         .attr("fill", function(d, i) { return "#ac26d9"; } )    
         .attr("fill", function(datum, index) { 
                                             if (index == 0) {
@@ -1045,15 +846,9 @@ function barChartOnce() {
          .transition().duration(600)
         .attr("width", function(datum, index) {   if(formatNoDecimals(datum) == 0) return 0; else return xFun(datum); })
         .attr("height", function(datum, index) { return barHeight; })
-        //.style("stroke","#2b929b")
-         
-         
-    
                     
      chart.selectAll("text").
                 data(intervalNrPerBar).
-                //enter().
-               // append("text").
                 attr("x", function(datum, index) { return 0 ; } ).
                 attr("y", function(datum, index) { return yFun(index); } ).
                 attr("dx", "1.2em").
@@ -1062,34 +857,12 @@ function barChartOnce() {
                 text( function(datum) { var arr = rescaleMinutes(datum); return "Up to " + formatNoDecimals(arr[1]) + " " + arr[0]; } )
                     .attr("class", "yaxistext");
      
-     
-   //   xAxis.tickFormat(function (d) { return ''; })
-      
      chart.select(".xaxis")
       .attr("transform", "translate("+leftmargin+"," + (h+20) + ")")
-      //.attr("width", 180)
       .call(xAxis)    
           
           .selectAll("text")                  
                 .style("text-anchor", "begin")
-                //.attr("dx", "3em")
                 .attr("dy", -13) ; // why...??
-                //.attr("transform", function(d) {
-                //        return "translate(0,7),rotate(-80)";
-                //    });
-            
-   
-   
-     // chart.append("text").              
-              // attr("x", leftmargin-10).
-              // attr("y", h+20).
-              // attr("dy", -5) .
-              // attr("class","xaxis").
-             // // attr("dx", -barWidth/2).
-              // attr("text-anchor", "end").
-              // //attr("style", "font-size: 9; font-family: 'Oxygen', sans-serif").
-              // text("Nr. of countries");
-            // //  attr("fill","white");     
-
 }
 
