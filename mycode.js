@@ -3,10 +3,9 @@ window.onload = loadD3Data;
 window.dataRead = false;
 var mapLoaded = false;
 
-var databaseFilename = "merged_db_20130315.csv";
+var databaseFilename = "merged_db_20130407.csv";
 window.productNames = ["cappuccino", "jeans", "bread", "internet", "sneakers", "movie", "prepaid", "mcdonalds"];
 window.selectedProductNames = ["cappuccino", "bread", "jeans", "movie"];
-
 
 var productNamesToText = new Array();
 productNamesToText["cappuccino"] = "a cappuccino in a restaurant";
