@@ -314,24 +314,18 @@
                                         
                                         $('#secondtab').css("display", "none"); 
                                         
-                                        //$("#aboutlink").leanModal();
+                                        //leanModal stuff
                                         $('a[rel*=leanModal]').leanModal({ closeButton: ".modal_close" });
-
-                                        var divA = $('#abouttext');
-                                        //console.log(div.height());
-                                        //console.log(Math.min (div.height(), ( 0.55*($(window).height() ) )) );
-                                        window.divAHeight = divA.height();
-                                       
-                                        divA.css('height', Math.min (divA.height(), ( 0.55* window.innerHeight) ) + 'px');
                                         
+                                        var divA = $('#abouttext');
+                                        window.divAHeight = divA.height();                                       
+                                        divA.css('height', Math.min (divA.height(), ( 0.55* window.innerHeight) ) + 'px');                                        
                                         var divU = $('#usetext');
                                         window.divUHeight = divU.height();
                                         divU.css('height', Math.min (divU.height(), ( 0.45*window.innerHeight) ) + 'px');
                                         
-                                        $(window).resize(function() {                                            
-                                            //console.log(($(window).height() ));
+                                        $(window).resize(function() {                  
                                             $('#abouttext').css('height', Math.min (window.divAHeight, 0.55*(window.innerHeight ))  + 'px');
-
                                             $('#usetext').css('height',  Math.min (window.divUHeight, 0.45*(window.innerHeight  ))  + 'px');
                                          });
                                                                             
