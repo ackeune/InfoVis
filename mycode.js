@@ -44,10 +44,8 @@ var outlineColorsCountries = [
     "#ec008b",
      dummyColor].reverse();
 
- var nrBars = 5;
+var nrBars = 5;
 
-/////////   needed:
-///////// lijst me landen afkortingen synnoniemen (GB/UK enz.)
 
 //////////
 // merged_db inlezen
@@ -187,7 +185,6 @@ function putStroke(code, region) {
 
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc.toLowerCase() == code; });    
     var active = isNumber(countryMatrixData['wage per minute']);
-    //sessvars.ccValues[code] != absentColor;
     if (active) {
         var newColor = outlineColorsCountries.pop();
         
@@ -301,7 +298,7 @@ function checkButton(code) {
 // coloring
 /////////
 
-// hier beter gelijk de kleuren berekenen (zijn nu getalswaarden voor in jqvmap)
+// aangeroepen de 1e keer, heeft Deferred timeout
 function getCountryColorValues(selectedProducts) {
     var deferred = $.Deferred();
     
@@ -374,9 +371,9 @@ function getCountryColorValues(selectedProducts) {
         deferred.resolve();
     }, 1000);
 }
-    
-function getCountryColorValues_noTimeOut(selectedProducts) {
-    
+
+// aangroepen als je product icoon (de)selecteert
+function getCountryColorValues_noTimeOut(selectedProducts) {    
 
     if (true)/*(!sessvars.ccValues || sessvars.ccValues.length == 0) */{
         var minutes = {};
@@ -388,10 +385,8 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
         var minMinutesC;
         minMinutes = 999999999;
         
-        sessvars.workData2.forEach(function(d) {
-            
-            var totalMinutes;
-            
+        sessvars.workData2.forEach(function(d) {            
+            var totalMinutes;           
             
                 if (isNumber(d["wage per minute"])) {
                     if(selectedProducts.length > 0) {
@@ -451,6 +446,7 @@ function getCountryColorValues_noTimeOut(selectedProducts) {
     }
 }
 
+// log based color scale
 var colorFun = d3.scale.log().base(4.1).nice()
     .range(["#f3f3f3", "#1e1e1e"]);
     
@@ -484,8 +480,8 @@ function submitCountries() {
     }
 }
 
- function addProductData (img)
- {
+ function addProductData (img) {
+ 
     if (_.contains(selectedProductNames, img.id)) {
         img.src = 'images/icons/' + img.id + '-deseleted.png';
         selectedProductNames = _.without(selectedProductNames, img.id) ;
@@ -494,17 +490,16 @@ function submitCountries() {
          img.src = 'images/icons/' + img.id + '-seleted.png';
          selectedProductNames.push(img.id) ;
     }
-     //getCountryColorValues(selectedProductNames);
-    getCountryColorValues_noTimeOut(selectedProductNames);
+    getCountryColorValues_noTimeOut(selectedProductNames);    
     
-    
-    $('#my_jqvmap').vectorMap('set', 'colors', sessvars.ccValues);
-    
+    $('#my_jqvmap').vectorMap('set', 'colors', sessvars.ccValues);    
 
-    barChart() ;
-    
+    barChart() ;    
  }  
  
+ //////////
+// verkrijg tekst voor in hovers en zo
+/////////
 function getTotalTextData(countryCode) {
     countryCode = countryCode.toUpperCase();
     countryMatrixData = _.find(sessvars.workData2, function(el) { return el.cc == countryCode; });
@@ -531,11 +526,9 @@ function getTotalTextData(countryCode) {
     
         var arr =    rescaleMinutes(countryMatrixProductData[i].minutes );
         var format = arr[0];
-        var data = arr[1];
+        var data = arr[1];        
         
-        
-        text += data.toFixed(2)  + " " + format + " for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";
-       
+        text += data.toFixed(2)  + " " + format + " for " + productNamesToText[countryMatrixProductData[i].name] + "</br>";       
     }
     return text;
  }
@@ -577,15 +570,13 @@ function getTextDataPercentagesAllProducts(countryCode) {
         }
         else {
             text += "(no data for " + productNamesToText[countryMatrixProductData[i].name] + ")</br>";
-        }
-       
+        }       
     }
     return text;
  }
  
  
- function yearsToMinutes(years) {
- 
+ function yearsToMinutes(years) { 
     var nrLeapYears = Math.floor(years % 4);
     var days = years * 365  ;
     days = days + nrLeapYears;
@@ -600,8 +591,10 @@ function getTextDataPercentagesAllProducts(countryCode) {
     return percentageWorking;
 }
  
- function calcBarChartData() {
-    
+ //////////
+// bar chart 
+/////////
+ function calcBarChartData() {    
     var interval = maxMinutes - minMinutes;
     var newScale2 = colorFun.copy();
     newScale2.range([minMinutes,maxMinutes]);
@@ -615,8 +608,7 @@ function getTextDataPercentagesAllProducts(countryCode) {
     for (var i=0; i < nrBars; i++) {
         intervalNrPerBar[i] = barInterval * (i);
        intervalNrPerBarReturned[i] = barInterval * (i+1);
-        nrCountriesPerBarRescaled[i] = 0;
-        
+        nrCountriesPerBarRescaled[i] = 0;        
     }
     
     sessvars.workData2.forEach(function(d) {
@@ -634,8 +626,7 @@ function getTextDataPercentagesAllProducts(countryCode) {
     return [nrCountriesPerBarRescaled, intervalNrPerBarReturned]
  }
  
- function rescaleMinutes (minutes) {
- 
+ function rescaleMinutes (minutes) { 
     if (minutes >= 60) {
         var hours = minutes / 60;
         if (hours >= 8) {
@@ -652,6 +643,7 @@ function getTextDataPercentagesAllProducts(countryCode) {
  
  }
  
+ // voor bar chart
 function setGradient(gradients, chart, id, startY,endY,startColor,endColor) {
     gradients[id] = chart
         .append("linearGradient");
@@ -671,8 +663,7 @@ function setGradient(gradients, chart, id, startY,endY,startColor,endColor) {
     gradients[id]
         .append("stop")
         .attr("offset", "1")
-        .attr("stop-color", endColor);
-    
+        .attr("stop-color", endColor);  
     
 }
 
@@ -688,6 +679,7 @@ function formatNoDecimals(nr) {
     
 }
 
+// bar chart functie voor de 1e instantiatie
 function barChartOnce() {
  
     chartDataArray = calcBarChartData();
@@ -787,7 +779,7 @@ function barChartOnce() {
 }
 
 
-
+// bar chart functie voor al ie al eens geladen is (dit doet dan transities)
  function barChart() {
  
     chartDataArray = calcBarChartData();
