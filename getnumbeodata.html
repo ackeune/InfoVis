@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>Get numbeo data</title>
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    </head>
+    <body>	
+    Wait for when processing is done. </br>
+    A popup will open. </br>
+    Save as e.g. "numbeo.csv"</br>
+    
+    <script>
+    //////////////
+    // get numbeo data
+    //////////////
+    var mergedDB =[], numbeo2mergedDB =[];
+
+    d3.csv("merged_db_20130308.csv", function(csv) {
+        mergedDB = csv;
+        if (numbeo2mergedDB.length > 0) 
+            getNumbeoData();
+    });
+
+    d3.csv("numbeo_to_merged.csv", function(csv) {
+        numbeo2mergedDB = csv;
+        if (mergedDB.length > 0) 
+            getNumbeoData();
+    });
+    
+    var mergedDB_country = [];
+    var numbeo2mergedDB_country_numbeo = [];
+    var numbeo2mergedDB_country_merged = [];
+    
+    
+    var numbeoData = [[]];
+    
+    function getNumbeoData() {
+        mergedDB.forEach(function(d) {
+            mergedDB_country.push(d.COUNTRY);  
+        })
+         numbeo2mergedDB.forEach(function(d) {
+            numbeo2mergedDB_country_numbeo.push(d["Numbeo"]);
+            numbeo2mergedDB_country_merged.push(d["Merged_db"]);  
+        })
+        console.log(numbeo2mergedDB_country_merged);
+        getFromNumbeo();
+        
+        function getFromNumbeo() {
+            var numbeo2mergedIndex = 0;
+            for (var i =0; i < mergedDB_country.length; i++) {
+            
+                if(mergedDB_country[i] == numbeo2mergedDB_country_merged[numbeo2mergedIndex]) {
+                    var country = numbeo2mergedDB_country_numbeo[numbeo2mergedIndex];                    
+                    numbeoData[i] =  getForCountry(country);
+                    numbeo2mergedIndex++;
+                }
+                else {
+                    numbeoData[i] = makeEmptyObject(mergedDB_country[i]) ;
+                }
+            }
+        console.log("numbeoData: ");
+        console.log(numbeoData);
+        }
+       var json = numbeoData;
+        var csv = JSON2CSV(json, true, true);
+    
+        window.open("data:text/csv;charset=utf-8," + escape(csv)); 
+    }
+    
+    function getForCountry(country) {
+        var url1 = encodeURIComponent("http://www.numbeo.com/api/country_prices?api_key=uva_nl_6432&currency=USD&country="+ country);
+        console.log(url1);
+        var nData = "error";
+        $.ajax({
+            url:"proxy.php?url=" + url1,
+            type:'GET',
+            dataType:"json",
+            async: false,
+            success:function(data){
+                //console.log(data.name);
+                nData = data;
+            },
+            error:function (request, status, error) {
+                console.log(request.responseText);
+            }
+        });
+        
+        
+        var obj = makeEmptyObject(country);
+        for(var i =0; i < nData.prices.length; i++) {
+            
+            if (nData.prices[i].item_name == "Cappuccino (regular), Restaurants") {                
+                obj["cappuccino price"] = nData.prices[i].average_price;
+            }
+            else if (nData.prices[i].item_name == "Internet (6 Mbps, Unlimited Data, Cable/ADSL), Utilities (Monthly)") {
+                obj["internet price"] = nData.prices[i].average_price;
+            }
+            else if (nData.prices[i].item_name == "1 Pair of Jeans (Levis 501 Or Similar), Clothing And Shoes") {
+                obj["jeans price"] = nData.prices[i].average_price;
+            }
+            else if (nData.prices[i].item_name == "1 Pair of Nike Shoes, Clothing And Shoes") {
+                obj["shoes price"] = nData.prices[i].average_price;
+            }
+            else if (nData.prices[i].item_name == "Combo Meal at McDonalds or Similar, Restaurants") {
+                obj["mcdonals price"] = nData.prices[i].average_price;
+            }
+            else if (nData.prices[i].item_name == "Cinema, International Release, 1 Seat, Sports And Leisure") {
+                obj["cinema price"] = nData.prices[i].average_price;
+            }
+            else if (nData.prices[i].item_name == "1 min. of Prepaid Mobile Tariff Local (No Discounts or Plans), Utilities (Monthly)") {
+                obj["prepaid price"] = nData.prices[i].average_price;
+            }
+            else if (nData.prices[i].item_name == "Loaf of Fresh White Bread (500g), Markets") {
+                obj["bread"] = nData.prices[i].average_price;
+            }
+        }
+        return obj;
+    }
+    
+    function makeEmptyObject(country) {
+        var obj = {};
+        obj["country"] = country;
+        obj["cappuccino price"] = "-";
+        obj["internet price"] ="-";
+        obj["jeans price"] = "-";
+        obj["shoes price"] = "-";
+        obj["mcdonals price"] = "-";
+        obj["cinema price"] = "-";
+        obj["prepaid price"] = "-";
+        obj["bread"] = "-";
+        return obj;
+    }
+    function JSON2CSV(objArray, labels, doublequotes) {
+        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+
+        var str = '';
+        var line = '';
+        if (labels == true) {
+            var head = array[0];
+            if (doublequotes == true) {
+                for (var index in array[0]) {
+                    var value = index + "";
+                    line += '"' + value.replace(/"/g, '""') + '",';
+                }
+            } else {
+                for (var index in array[0]) {
+                    line += index + ',';
+                }
+            }
+
+            line = line.slice(0, -1);
+            str += line + '\r\n';
+        }
+
+        for (var i = 0; i < array.length; i++) {
+            var line = '';
+
+            if (doublequotes == true) {
+                for (var index in array[i]) {
+                    var value = array[i][index] + "";
+                    line += '"' + value.replace(/"/g, '""') + '",';
+                }
+            } else {
+                for (var index in array[i]) {
+                    line += array[i][index] + ',';
+                }
+            }
+
+            line = line.slice(0, -1);
+            str += line + '\r\n';
+        }
+        return str;
+        
+    }
+            
+    
+    
+    </script>
+        
+        
+    </body>
+</html>    

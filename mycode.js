@@ -62,7 +62,7 @@ function loadD3Data() {
     var deferred = $.Deferred();
 
     setTimeout(function() {
-        if (true || !sessvars.workData2 || !sessvars.codeToName) { // niet elke keer inlezen bij POST refresh
+        if ( !sessvars.workData2 || !sessvars.codeToName) { // niet elke keer inlezen bij  refresh
             sessvars.workData2 = [];
             sessvars.codeToName = {};
 
@@ -91,8 +91,10 @@ function loadD3Data() {
                 fillMatrixMinutes();
                 noProductsNoWage();              
                 window.dataRead = true;
-            });            
+            });   
+            console.log("I READ DATA");            
         }
+        
         deferred.resolve();
     }, 100);
     
@@ -304,7 +306,7 @@ function getCountryColorValues(selectedProducts) {
     var deferred = $.Deferred();
     
     setTimeout(function() {
-        if (true || !sessvars.ccValues || sessvars.ccValues.length == 0) {
+        if (true /*|| !sessvars.ccValues || sessvars.ccValues.length == 0*/) {
         
             
             var minutes = {};

@@ -1,4 +1,4 @@
-<!-- <?php session_start(); ?> -->
+
 
 
 <html lang="en">
@@ -317,8 +317,24 @@
                                         //$("#aboutlink").leanModal();
                                         $('a[rel*=leanModal]').leanModal({ closeButton: ".modal_close" });
 
+                                        var divA = $('#abouttext');
+                                        //console.log(div.height());
+                                        //console.log(Math.min (div.height(), ( 0.55*($(window).height() ) )) );
+                                        window.divAHeight = divA.height();
+                                       
+                                        divA.css('height', Math.min (divA.height(), ( 0.55* window.innerHeight) ) + 'px');
+                                        
+                                        var divU = $('#usetext');
+                                        window.divUHeight = divU.height();
+                                        divU.css('height', Math.min (divU.height(), ( 0.45*window.innerHeight) ) + 'px');
+                                        
+                                        $(window).resize(function() {                                            
+                                            //console.log(($(window).height() ));
+                                            $('#abouttext').css('height', Math.min (window.divAHeight, 0.55*(window.innerHeight ))  + 'px');
 
-                                    
+                                            $('#usetext').css('height',  Math.min (window.divUHeight, 0.45*(window.innerHeight  ))  + 'px');
+                                         });
+                                                                            
                                 });
                             });
                         });
@@ -358,10 +374,10 @@
 
 
 <div  id="usetext">
-                <p class="aboutheader" style="font-size: 13px;"> How to use  <i> Trade your Life </i> ? </p>
-               
+                <p class="aboutheader" style="font-size: 13px;"> How to use  <i> Trade your Life </i> ?  <a class="modal_close" href="#"></a></p>
+                    <div id="usetextinner" >
                     
-                     <a class="modal_close" href="#"></a>
+                     
                      
                      <p class="aboutheader"> What it shows </p>
                     <p class="abouttext">
@@ -389,12 +405,15 @@
                      The first radial chart shows the absolute working hours. The second radial chart shows the percentage of life needed to work. (To see that these are not always the same, compare for example Iran and The Netherlands!)
                     </p>
                     
-                
+                </div>
             </div>
             
              <div id="abouttext">
-                   <p class="aboutheader" style="font-size: 13px;"> What is <i> Trade your Life </i> ? </p>
-                    <a class="modal_close" href="#"></a>
+                   <p class="aboutheader" style="font-size: 13px;"> What is <i> Trade your Life </i> ? <a class="modal_close" href="#" ></a></p>
+                    
+                    
+                    <div id="abouttextinner" >
+                    
                
                 
                     
@@ -466,6 +485,7 @@
                     <p class="abouttext">
                      The (<a class="inabout" href="http://www.uva.nl/en/home" TARGET="_blank">UvA</a> and <a  class="inabout" href="http://www.mahku.nl/" TARGET="_blank">maHKU</a> based) <a class="inabout" href="http://showmethedata.nl/2012/" TARGET="_blank">InfoVis 2012/2013</a> team of:  Agnes, Ana, Anna and Buffy
                     </p>
+                </div>
             </div>
 
     

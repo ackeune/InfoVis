@@ -40,17 +40,32 @@ p.small {
 hr.division{
     color: #808080;
     background-color: #808080;
-    border: 0;
+    border: 1px solid  #808080;
     text-align:center;
     margin: 7px;
     margin-top: 30px;
     margin-bottom:20px;
     float: left;
     width: 679px;
-    border-radius:3px;
+     border-radius: 7px 7px 7px 7px;
     
 }
 
+hr.about {
+    color: #808080;
+    background-color: #808080;
+    border: 1px solid  #808080;
+    text-align:center;
+    margin: 7px;
+    margin-top: 0px;
+    margin-bottom:0px;
+    margin-left:0px;
+    float: left;
+    width: 95%;
+    opacity: 0.5;
+     border-radius: 7px 7px 7px 7px;
+    
+}
 
 
 #header {
@@ -449,11 +464,16 @@ p.info2 {
 {
     
     z-index:103;
-    position:fixed;
-
+  
+    position: fixed;
+    
+    height: 460px;
+   
+	width: 600px;
    
     
-	width: 800px;
+    
+    
 	padding: 30px;
     padding-top: 15px;
     
@@ -472,6 +492,12 @@ p.info2 {
     box-shadow: 1px 1px 1px rgba(255,255,255,.3);
     
     display: none;
+}
+
+#abouttextinner {    
+    position: absolute;
+    top: 50; bottom: 30; left: 30; right: 10;   
+    overflow: auto;
 }
 
 #usetext
@@ -483,6 +509,8 @@ p.info2 {
     top: 100px;
     
 	width: 600px;
+    height: 370px;
+    
 	padding: 30px;
     padding-top: 15px;
     
@@ -503,9 +531,15 @@ p.info2 {
     display: none;
 }
 
+#usetextinner {    
+    position: absolute;
+    top: 50; bottom: 30; left: 30; right: 10;   
+    overflow: auto;
+}
+
 .modal_close { 
     position: absolute; 
-    top: 5px; 
+    top: 15px; 
     right: 8px; 
     display: block; 
     width: 15px; 
@@ -514,6 +548,7 @@ p.info2 {
     z-index: 20;
     background-size: 13px 13px;
      background-repeat: no-repeat;
+     float:right;
 
  }
 
